@@ -1,0 +1,383 @@
+<?php
+
+define("FRAGRANCE", "Fragrance");
+define("SKINCARE", "Skin Care");
+define("MAKEUP", "Make Up");
+
+function cnf_product_menu() {
+	$items['fragrance'] = array(
+		'title' => t('Fragrance'),
+		'description' => 'fragrance',
+		'page callback' => 'fragrance',
+		'access arguments' => true,
+		'access callback' => true,
+		'type' =>  MENU_CALLBACK,
+	);  
+	
+	$items['skin_care'] = array(
+		'title' => t('Skin Care'),
+		'description' => 'Skin Care',
+		'page callback' => 'skin_care',
+		'access arguments' => true,
+		'access callback' => true,
+		'type' =>  MENU_CALLBACK,
+	); 
+	
+	$items['make_up'] = array(
+		'title' => t('MAke Up'),
+		'description' => 'Make Up',
+		'page callback' => 'make_up',
+		'access arguments' => true,
+		'access callback' => true,
+		'type' =>  MENU_CALLBACK,
+	); 
+	
+	$items['admin/product_import'] = array(
+		'title' => t('Product Import'),
+		'page callback' => 'drupal_get_form',
+    'page arguments' => array('product_import_form'),
+    'access callback' => 'user_is_logged_in',
+		'type' =>  MENU_CALLBACK,
+	);
+	
+	return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cnf_product_theme($existing, $type, $theme, $path) {
+    return array(
+      'cnf_product' => array(
+        'variables' => array('content' => NULL),
+        'template' => 'cnf_product', // place you file in 'theme' folder of you module folder
+        'path' => drupal_get_path('module', 'cnf_product')
+      )
+    );
+}
+
+function cnf_product_block_info() {
+  $blocks['skin_care'] = array('info' => t('Skin Care Category'));
+  $blocks['make_up'] = array('info' => t('Make Up Category'));
+  $blocks['fragrance'] = array('info' => t('Fragrance Category'));
+  $blocks['fragrance_brand'] = array('info' => t('Fragrance Brand'));
+  return $blocks;
+}
+
+function cnf_product_block_view($delta='') {
+  $block = array();
+  switch ($delta) {
+    case 'skin_care':
+      $block['subject'] = t('');
+      $block['content'] = skin_care_category_block();
+      break;
+		case 'make_up':
+      $block['subject'] = t('');
+      $block['content'] = make_up_category_block();
+      break;
+		case 'fragrance':
+      $block['subject'] = t('');
+      $block['content'] = fragrance_category_block();
+      break;
+		case 'fragrance_brand':
+      $block['subject'] = t('');
+      $block['content'] = fragrance_brand_block();
+      break;
+  }
+  return $block;
+}
+
+function skin_care_category_block() {
+	$product = _cnf_product_block('skin_care');
+	return $product;
+}
+
+function make_up_category_block() {
+	$product = _cnf_product_block('make_up');
+	return $product;
+}
+
+function fragrance_category_block() {
+	$product = _cnf_product_block('fragrance');
+	return $product;
+}
+
+function fragrance_brand_block() {
+	$brand = _cnf_product_brand_block('fragrance');
+	return $brand;
+}
+
+function _cnf_product_block($product_type){
+	global $base_url;
+	$url = arg(0);
+	$tid = arg(1);
+	if (empty($tid)) $tid = _get_default_category($product_type);
+	
+	if ($url == $product_type) {
+		$categories = get_product_category($product_type);
+		$output = '<ul class="sidebar-menu">';
+		foreach($categories as $category) {
+			$active = '';
+			$category_tid = $category->tid;
+			$category_name = $category->name;
+			if ($tid == $category_tid) $active = 'class="active"';
+				$output .= '<li '.$active.'><a title="'.$category_name.'" href="'.$base_url.'/'.$url.'/'.$category_tid.'">'.$category_name.'</a></li>';
+		}
+		$output .= '</ul>';
+		//print "<pre>".print_r($category_name, true)."</pre>";
+		return $output;
+	}
+}
+
+
+function _cnf_product_brand_block($product_type){
+	global $base_url;
+	$brand_char = array();
+	$url = arg(0);
+	$tid = arg(1);
+	if (empty($tid)) $tid = _get_default_category($product_type);
+	
+	if ($url == $product_type) {
+		$brands = get_product_brand($product_type);	
+		foreach($brands as $brand) {
+			$brand_term = taxonomy_term_load($brand->tid);
+			if ($tid == $brand_term->field_fragrance_category[LANGUAGE_NONE][0]['tid'])
+				$brand_char[] = substr($brand->name, 0, 1);
+		}
+		$brand_char = array_unique($brand_char);
+		
+		$output = '<h4>Brands - A to Z</h4><ul class="sidebar-menu indexing">';
+		foreach($brand_char as $char) {
+			$output .= '<li><a href="'.$base_url.'/fragrance/'.$tid.'?b='.$char.'" title="'.strtoupper($char).'">'.strtoupper($char).'</a></li>';
+		}
+		$brand_char = array_unique($brand_char);
+		$output .= '</ul>';
+		//print "<pre>".print_r($brand_term, true)."</pre>";
+		return $output;
+	}
+}
+
+function skin_care() {
+	$product = _cnf_product_page('skin_care');
+	return $product;
+}
+
+function make_up() {
+	$product = _cnf_product_page('make_up');
+	return $product;
+}
+
+function fragrance() {
+	$product = _cnf_product_page('fragrance');
+	return $product;
+}
+
+function _cnf_product_page($product_type){
+	$page = $_GET['page'];
+	$category_tid = arg(1);
+	if (empty($category_tid)) $category_tid = _get_default_category($product_type);
+	
+	if (isset($category_tid)) {
+		$category = taxonomy_term_load($category_tid);
+		$content['category_description'] = $category->description;
+		$content['product_type'] = $product_type;
+		
+		// this is the query - start
+		if (isset($_GET['b'])) {
+			// get brand tids
+			$query_brand = "SELECT b.tid FROM taxonomy_vocabulary a, taxonomy_term_data b WHERE a.vid=b.vid AND a.machine_name = '".$product_type."_brand' AND b.name LIKE '".$_GET['b']."%' ORDER BY b.name";
+			$result = db_query($query_brand);
+			$count = 1;
+			foreach ($result as $row) {
+				if ($count == 1) $brand_or .= 'field_'.$product_type.'_brand_tid = '.$row->tid;
+				else $brand_or .= ' OR field_'.$product_type.'_brand_tid = '.$row->tid;
+				$count = $count + 1;
+			}
+			if (isset($brand_or)) $where = ' AND ('.$brand_or.')';
+			$query_total = "SELECT COUNT(product_id) FROM commerce_product a, field_data_field_".$product_type."_category b, field_data_field_".$product_type."_brand c WHERE a.product_id = b.entity_id AND a.product_id = c.entity_id ".$where." AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."'";
+			$query = "SELECT product_id FROM commerce_product a, field_data_field_".$product_type."_category b, field_data_field_".$product_type."_brand c WHERE a.product_id = b.entity_id AND a.product_id = c.entity_id ".$where." AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."'";	
+		} else {
+			$query_total = "SELECT COUNT(product_id) FROM commerce_product a, field_data_field_".$product_type."_category b WHERE a.product_id = b.entity_id AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."'";
+			$query = "SELECT product_id FROM commerce_product a, field_data_field_".$product_type."_category b WHERE a.product_id = b.entity_id AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."'";	
+		}
+		// query - end
+			
+		if ($product_type == 'fragrance') {					
+			$content['category_title'] = FRAGRANCE.' - '.$category->name;
+			if (isset($category->field_fragrance_category_image[LANGUAGE_NONE][0]['uri'])) $content['category_image'] = file_create_url($category->field_fragrance_category_image[LANGUAGE_NONE][0]['uri']);
+		} else {
+			if ($product_type == 'skin_care') {
+				$content['category_title'] = SKINCARE.' - '.$category->name;
+				if (isset($category->field_skin_care_category_image[LANGUAGE_NONE][0]['uri'])) $content['category_image'] = file_create_url($category->field_skin_care_category_image[LANGUAGE_NONE][0]['uri']);
+			} else if ($product_type == 'make_up') {
+				$content['category_title'] = MAKEUP.' - '.$category->name;
+				if (isset($category->field_make_up_category_image[LANGUAGE_NONE][0]['uri'])) $content['category_image'] = file_create_url($category->field_make_up_category_image[LANGUAGE_NONE][0]['uri']);
+			}
+		}
+		// paging
+		$total = db_query($query_total)->fetchField();
+		pager_default_initialize($total,ITEM_PER_PAGE);
+		//drupal_set_message($query);
+		// listing
+		$result = db_query_range($query, $page, ITEM_PER_PAGE);
+		foreach ($result as $row) {
+			$product = commerce_product_load($row->product_id);
+			$content['product'][] = $product;
+		}
+		//print "<pre>".print_r($content, true)."</pre>";	
+		return theme('cnf_product', array('content' => $content));
+	} else {
+		return 'Invalid category';
+	}
+}
+
+function product_import_form($form, &$form_state){
+	$form['product_type'] = array(
+		'#type' => 'select',
+		'#title' => t('Product Type'),
+		'#required' => true,
+		'#description' => t('Product Type'),
+		'#options' => array('fragrance'=>'Fragrance', 'skin_care'=>'Skin Care', 'make_up'=>'Make Up')
+	);
+
+	$form['#attributes']['enctype'] = "multipart/form-data";
+	$form['excel_upload'] = array(
+	  '#type' => 'managed_file',
+		'#title' => t('Excel File'),
+		'#size' => 40,
+		'#description' => t('Select the Excel file to be imported. '),
+	  '#upload_location' => 'public://product_excel',
+	  '#upload_validators' => array(
+		'file_validate_extensions' => array('xls xlsx'),
+		'#required' => true,
+	  ),
+	);
+
+	$form['submit'] = array(
+		'#type' => 'submit', 
+		'#title' => 'Submit',
+		'#value' => 'Submit'
+	);
+
+	return $form;
+}
+
+function product_import_form_validate($form, &$form_state){
+    $validators = array('file_validate_extensions' => array('xls', 'xlsx'));
+    $file = file_save_upload('excel_upload', $validators);
+    // check file uploaded OK
+    if (!$file) { 
+      form_set_error('excel_upload', t('A file must be uploaded'));
+    } else {
+      // set files to form_state, to process when form is submitted
+      $form_state['values']['excel_upload'] = $file;
+    } 
+}
+
+function product_import_form_submit($form, &$form_state){
+	//$file = file_load($form_state['values']['excel_upload']->fid);
+	//$file->status = FILE_STATUS_PERMANENT;
+	//file_save($file);
+	$filename = str_replace("public://", "", $form_state['values']['excel_upload']->uri);
+	product_import($filename, $form_state['values']['excel_upload']->fid, $form_state['values']['product_type']);
+}
+
+function product_import($filename, $fid, $product_type) {
+	module_load_include('inc', 'phpexcel');
+  // The path to the excel file
+  $path = 'sites/default/files/'.$filename;	
+  $result = phpexcel_import($path);
+  
+  if (is_array($result)) {
+    //drupal_set_message(t("We did it !"));
+		drupal_set_message("<pre>".print_r($result, true)."</pre>");
+		/*foreach($result[0] as $product) {
+			$brand = $product['BRAND'];
+			$category = $product['GENDER'];
+			$title = $product['PRODUCT'];
+			$sku = $product['SKU'];
+			$price = $product['PRICE'];
+			$info = $product['Info Products (Notes, wangi, brand dari mana, perfumist'];
+			$vocab_brand = $product_type.'_brand';
+			$vocab_category = $product_type.'_category';
+			$taxo_brand = taxonomy_get_term_by_name($brand, $vocab_brand);
+			$taxo_category = taxonomy_get_term_by_name($category, $vocab_category);
+			$check_sku = commerce_product_load_by_sku($sku);
+			
+			if (empty($taxo_brand)) { // check brand
+				drupal_set_message('Brand '.$brand.' tidak ditemukan untuk '.$product_type, 'error');
+			} else if (empty($taxo_category)) { // check category
+				drupal_set_message('Gender '.$category.' tidak ditemukan untuk '.$product_type, 'error');
+			} else if (!empty($check_sku)) { // check sku
+				drupal_set_message('SKU '.$sku.' sudah ada', 'error');
+				//drupal_set_message("<pre>".print_r($check_sku, true)."</pre>");
+			} else { // insert product
+				// Product
+				$product = commerce_product_new($product_type);
+				$product->sku = $sku;
+				$product->title = $title;
+				$product->language = LANGUAGE_NONE;
+				$product->uid = 1;
+				$product->commerce_price[LANGUAGE_NONE][0] = array(
+					'amount' => $price,
+					'currency_code' => "IDR",
+				);
+				if ($product_type == 'fragrance') {
+					$product->field_fragrance_brand[LANGUAGE_NONE][0]['tid'] = key($taxo_brand);
+					$product->field_fragrance_category[LANGUAGE_NONE][0]['tid'] = key($taxo_category);
+					$product->field_fragrance_description[LANGUAGE_NONE][0]['value'] = $info;
+				} else if ($product_type == 'skin_care') {
+					$product->field_skin_care_brand[LANGUAGE_NONE][0]['tid'] = key($taxo_brand);
+					$product->field_skin_care_category[LANGUAGE_NONE][0]['tid'] = key($taxo_category);
+					$product->field_skin_care_description[LANGUAGE_NONE][0]['value'] = $info;
+				} else if ($product_type == 'make_up') {
+					$product->field_make_up_brand[LANGUAGE_NONE][0]['tid'] = key($taxo_brand);
+					$product->field_make_up_category[LANGUAGE_NONE][0]['tid'] = key($taxo_category);
+					$product->field_make_up_description[LANGUAGE_NONE][0]['value'] = $info;
+				}
+				commerce_product_save($product);
+				
+				// Product display
+				$node = (object)array('type' => $product_type.'_product');
+				node_object_prepare($node);
+				$node->title = $title;
+				$node->uid = 1;
+				if ($product_type == 'fragrance') {
+					$node->field_fragrance_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
+				} else if ($product_type == 'skin_care') {
+					$node->field_skin_care_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
+				} else if ($product_type == 'make_up') {
+					$node->field_make_up_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
+				}
+				$node->language = LANGUAGE_NONE;
+				node_save($node);
+				drupal_set_message('SKU '.$sku.' berhasil ditambahkan', 'notice');
+				//drupal_set_message("<pre>".print_r($product, true)."</pre>");
+				//drupal_set_message("<pre>".print_r($node, true)."</pre>");
+			}
+		}
+		// delete the file after all done
+		$file = file_load($fid);
+		file_delete($file);*/
+  }
+  else {
+    drupal_set_message(t("Oops ! An error occured !"), 'error');
+  }
+	
+	//return $output;
+}
+
+function _get_default_category($product_type){
+	$query = "SELECT b.tid FROM taxonomy_vocabulary a, taxonomy_term_data b WHERE a.vid=b.vid AND a.machine_name = '".$product_type."_category' LIMIT 1";
+	$tid = db_query($query)->fetchField();
+	return $tid;
+}
+
+function _get_brand_name($tid) {
+	if (isset($tid)) {
+		$query = "SELECT name FROM taxonomy_term_data WHERE tid = ".$tid." LIMIT 1";
+		$brand = db_query($query)->fetchField();
+		return $brand;
+	}
+}
+?>

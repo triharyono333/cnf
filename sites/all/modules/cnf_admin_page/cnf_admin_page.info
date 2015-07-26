@@ -1,0 +1,6 @@
+; $Id$
+name = CnF Admin Pages
+description = Module to Create CnF Admin Pages
+version = "0.1-Tri"
+package = cnf
+core = 7.x

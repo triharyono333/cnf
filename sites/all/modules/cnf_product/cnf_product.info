@@ -1,0 +1,6 @@
+; $Id$
+name = CnF Product
+description = Module to CnF Product
+version = "0.1-Tri"
+package = cnf
+core = 7.x

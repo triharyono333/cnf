@@ -1,0 +1,130 @@
+<?php
+
+// $Id$
+
+function cnf_event_menu() {
+    
+	$items['news_event'] = array(
+		'title' => t('News Event'),
+		'description' => 'News Event',
+		'page callback' => 'news_event',
+		'access arguments' => true,
+		'access callback' => true,
+		'type' =>  MENU_CALLBACK,
+	);   
+	return $items;
+}
+
+function news_event() {
+	global $base_url;
+	$page = $_GET['page'];
+	$archive_month = arg(1);
+	$archive_year = arg(2);
+	
+	if (empty($archive_month) && empty($archive_year)) {
+		$query = "SELECT MONTH(FROM_UNIXTIME(created)) as month, YEAR(FROM_UNIXTIME(created)) as year FROM node "
+							. "WHERE type='event' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
+		$result = db_query($query);
+		foreach ($result as $archive) {
+			$archive_month = $archive->month;
+			$archive_year = $archive->year;
+		}
+	}
+	if (isset($archive_month) && isset($archive_year)) {
+		$archive_query = " AND MONTH(FROM_UNIXTIME(created)) = '".$archive_month."' AND YEAR(FROM_UNIXTIME(created)) = '".$archive_year."'";
+		$query = "SELECT COUNT(nid) FROM node WHERE type = 'event'".$archive_query;
+		$total = db_query($query)->fetchField();
+		pager_default_initialize($total,ITEM_PER_PAGE);
+
+
+		$query = "SELECT nid FROM node WHERE type='event'".$archive_query;
+		$result = db_query_range($query, $page, ITEM_PER_PAGE);
+		foreach ($result as $news) {
+			 $node_nids[] = $news->nid;
+		}
+		$content['month_name'] = date('F', mktime(0, 0, 0, $archive_month, 10));
+		$content['year'] = $archive_year;
+		$content['news'] = node_load_multiple($node_nids);
+		return theme('cnf_event', array('content' => $content));
+	} else {
+		return 'No Event';
+	}
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cnf_event_theme($existing, $type, $theme, $path) {
+    return array(
+      'cnf_event' => array(
+        'variables' => array('content' => NULL),
+        'template' => 'cnf_event', // place you file in 'theme' folder of you module folder
+        'path' => drupal_get_path('module', 'cnf_event')
+      )
+    );
+}
+
+function cnf_event_block_info() {
+  $blocks['news_archive'] = array('info' => t('News Archive'));
+  return $blocks;
+}
+
+function cnf_event_block_view($delta='') {
+  $block = array();
+  switch ($delta) {
+    case 'news_archive':
+      $block['subject'] = t('');
+      $block['content'] = _news_archive();
+      break;
+  }
+  return $block;
+}
+
+function _news_archive(){
+    global $base_url;
+		$arg0 = arg(0);
+		//$arg1 = arg(1);
+		//if ($arg0 == 'node' && isset($arg1)) {
+		if ($arg0 == 'news_event') {
+			$archive_month = arg(1);
+			$archive_year = arg(2);
+
+			if (empty($archive_month) && empty($archive_year)) {
+				$query = "SELECT MONTH(FROM_UNIXTIME(created)) as month, YEAR(FROM_UNIXTIME(created)) as year FROM node "
+									. "WHERE type='event' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
+				$result = db_query($query);
+				foreach ($result as $archive) {
+					$archive_month = $archive->month;
+					$archive_year = $archive->year;
+				}
+			}
+	
+			$query = "SELECT MONTH(FROM_UNIXTIME(created)) as month, YEAR(FROM_UNIXTIME(created)) as year FROM node "
+							. "WHERE type='event' GROUP BY month, year ORDER by year ASC LIMIT 12";
+			$result = db_query($query);
+			$output = '<h4>Archives</h4> <ul class="hover-effect archives">';
+			foreach ($result as $archive) {
+				if ($archive_month == $archive->month && $archive_year == $archive->year) 
+				$output .= '<li class="active"><a href="'.$base_url.'/news_event/'.$archive->month.'/'.$archive->year.'">'.date("F",mktime(0,0,0,$archive->month,1,$archive->year)).' '.$archive->year.'</a></li>';
+			}
+			$output .= '</ul>';
+
+			return $output;
+		}
+}
+
+function _get_last_event($number=5) {
+	global $base_url;
+	$output = '<ul class="arrow hover-effect archives">';
+	$query = "SELECT nid, title FROM node WHERE type='event' ORDER BY nid DESC LIMIT ".$number;
+	$result = db_query($query);
+	foreach ($result as $news) {
+		//$alias = drupal_lookup_path('alias',"node/".$news->nid);
+		$output .= '<li><a href="'.$base_url.'/news_event">'.$news->title.'</a></li>';
+	}	
+	$output .= '</ul>';
+	
+	return $output;
+}
+
+?>

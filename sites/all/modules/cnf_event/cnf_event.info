@@ -1,0 +1,6 @@
+; $Id$
+name = CnF Event
+description = Module to CnF Event Page
+version = "0.1-Tri"
+package = cnf
+core = 7.x

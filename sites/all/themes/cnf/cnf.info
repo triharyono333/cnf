@@ -1,0 +1,14 @@
+name = CnF   
+description = A custom theme for CnF
+package = Custom
+version = VERSION
+core = 7.x
+
+; Information added by tri packaging script on 2015-07-16
+version = "7.22"
+project = "drupal"
+datestamp = "1365027012"
+
+regions[content] = Content
+regions[sidebar_first] = Sidebar first
+

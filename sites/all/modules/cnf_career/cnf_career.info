@@ -1,0 +1,6 @@
+; $Id$
+name = CnF Career
+description = Module to CnF Career
+version = "0.1-Tri"
+package = cnf
+core = 7.x

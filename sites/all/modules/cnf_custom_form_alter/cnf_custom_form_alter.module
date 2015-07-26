@@ -1,0 +1,97 @@
+<?php
+// $Id$
+
+function cnf_custom_form_alter_form_alter(&$form, &$form_state, $form_id) {
+	//print "<pre>".print_r($form, true)."</pre>";
+	//print $form_id;
+	global $user;
+	if ($user->uid != 1) {
+		$style = "<style>
+								.vertical-tabs  { display:none; }
+								#edit-body-und-0-format { display:none; }
+								#node-admin-content #edit-options  { display:none; }
+								#node-admin-content #edit-filters  { display:none; }
+							</style>";
+		print $style;
+	}
+	if($form_id == 'page_node_form') {
+		$form['actions']['submit']['#submit'][] = 'page_node_form_submit_handler';
+	}
+	else if($form_id == 'career_node_form') {
+		$form['actions']['submit']['#submit'][] = 'career_node_form_submit_handler';
+	}
+	else if($form_id == 'banner_node_form') {
+		$form['actions']['submit']['#submit'][] = 'banner_node_form_submit_handler';
+	}
+	else if($form_id == 'corporate_node_form') {
+		$form['actions']['submit']['#submit'][] = 'corporate_node_form_submit_handler';
+	}
+	else if($form_id == 'event_node_form') {
+		$form['actions']['submit']['#submit'][] = 'event_node_form_submit_handler';
+	}
+	else if($form_id == 'fragrance_product_node_form') {
+		$form['actions']['submit']['#submit'][] = 'fragrance_product_node_form_submit_handler';
+	}
+	else if($form_id == 'make_up_product_node_form') {
+		$form['actions']['submit']['#submit'][] = 'make_up_product_node_form_submit_handler';
+	}
+	else if($form_id == 'skin_care_product_node_form') {
+		$form['actions']['submit']['#submit'][] = 'skin_care_product_node_form_submit_handler';
+	}
+	else if($form_id == 'press_coverage_node_form') {
+		$form['actions']['submit']['#submit'][] = 'press_coverage_node_form_submit_handler';
+	}
+	else if($form_id == 'simplenews_node_form') {
+		$form['actions']['submit']['#submit'][] = 'simplenews_node_form_submit_handler';
+	}
+	else if($form_id == 'store_location_node_form') {
+		$form['actions']['submit']['#submit'][] = 'store_location_node_form_submit_handler';
+	}
+}
+
+function page_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/page';   
+}
+
+function career_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/career';   
+}
+
+function banner_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/banner';   
+}
+
+function corporate_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/corporate';   
+}
+
+function event_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/event';   
+}
+
+function fragrance_product_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/fragrance-product';   
+}
+
+function make_up_product_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/make-up-product';   
+}
+
+function skin_care_product_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/skin-care-product';   
+}
+
+function press_coverage_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/press-coverage';   
+}
+
+function store_location_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/store-location';   
+}
+
+function simplenews_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/content/simplenews';   
+}
+
+
+?>

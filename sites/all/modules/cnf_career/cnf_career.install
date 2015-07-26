@@ -1,0 +1,59 @@
+<?php
+
+// $Id$
+
+/**
+ * @file Installation file for android activation module
+**/
+
+// create table android_activation
+function cnf_career_schema() {  
+    $schema['cv'] = array(    
+    'description' => 'Storing CV Data',
+    'fields' => array(
+        'id' => array(
+					'description' => 'id',
+					'type' => 'serial',
+				),      
+        'name' => array(
+            'description' => 'Name',
+            'type' => 'varchar',
+            'length' => 255,
+        ),      
+        'email' => array(
+            'description' => 'Email',
+            'type' => 'varchar',
+            'length' => 255,
+        ),      
+        'position' => array(
+            'description' => 'Position',
+            'type' => 'varchar',
+            'length' => 255,
+        ),      
+        'cv' => array(
+            'description' => 'CV',
+            'type' => 'varchar',
+            'length' => 255,
+        ),      
+        'cover' => array(
+            'description' => 'Cover',
+            'type' => 'varchar',
+            'length' => 255,
+        ),       
+        'created' => array(
+            'description' => 'Created Date',
+            'type' => 'varchar',
+            'mysql_type' => 'DATETIME',
+        ),      
+        'updated' => array(
+            'description' => 'Updated Date',
+            'type' => 'varchar',
+            'mysql_type' => 'DATETIME',
+        ),
+    ),
+    'primary key' => array('id'),
+  );
+  
+		
+  return $schema;
+}

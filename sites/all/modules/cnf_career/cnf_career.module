@@ -1,0 +1,231 @@
+<?php
+
+// $Id$
+
+/**
+ * Implements hook_entity_info().
+ */
+function cnf_career_entity_info() {
+
+  $info = array();
+
+  $info['cv'] = array(
+    'label' => t('CV'),
+    'base table' => 'cv',
+    'entity keys' => array(
+      'id' => 'id',
+    ),
+    'fieldable' => TRUE,
+    'module' => 'cnf_career',
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+  );
+
+  return $info;
+}
+
+function cnf_career_menu() {
+  $items['career'] = array(
+		'title' => t(''),
+		'page callback' => 'career',
+		'access arguments' => true,
+		'access callback' => true,
+		'type' =>  MENU_CALLBACK,
+	);
+	 
+	return $items;
+}
+
+function cv_form($form, &$form_state) {
+	$arg1 = arg(1);
+	if (empty($arg1)) { // get default career page
+		$query = "SELECT nid FROM node WHERE type='career' LIMIT 1";
+		$arg1 = db_query($query)->fetchField();
+	}
+	if (isset($arg1)) {
+		$query = "SELECT title FROM node WHERE type='career' AND nid=".$arg1;
+		$position[$arg1] = db_query($query)->fetchField();
+	}
+
+	$form['name'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder' => t('Enter your name')),
+	);
+	$form['email_address'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder' => t('Enter your email')),
+	);
+	$form['position'] = array(
+		'#type' => 'textfield',
+		'#default_value' => $position,
+		'#attributes' => array('readonly' => 'readonly'),
+	);
+
+	$form['#attributes']['enctype'] = "multipart/form-data";
+	$form['cv'] = array(
+		'#type' => 'managed_file',
+		//'#title' => t('CV'),
+		'#size' => 10,
+		'#upload_location' => 'public://career/cv',
+		'#upload_validators' => array(
+		'file_validate_extensions' => array('doc docx pdf'),
+		'#required' => true,
+		),
+	);
+	$form['cover_letter'] = array(
+		'#type' => 'managed_file',
+		//'#title' => t('Cover Letter'),
+		'#size' => 10,
+		'#upload_location' => 'public://career/cover',
+		'#upload_validators' => array(
+		'file_validate_extensions' => array('doc docx jpg png gif jpeg pdf'),
+		'#required' => true,
+		),
+	);
+	$form['captcha'] = array(
+		'#type' => 'captcha',
+		'#captcha_type' => 'image_captcha/Image',
+	);
+	$form['submit'] = array(
+			'#type' => 'submit',
+			'#value' => 'Send Application',
+	);
+
+	return $form;
+}
+
+function cv_form_validate($form, &$form_state){
+    $cv_validators = array('file_validate_extensions' => array('doc', 'docx', 'pdf'));
+    $cv_file = file_save_upload('cv', $cv_validators);
+    $cover_validators = array('file_validate_extensions' => array('doc', 'docx', 'png', 'jpg', 'gif', 'jpeg', 'pdf'));
+    $cover_file = file_save_upload('cover_letter', $cover_validators);
+    // check file uploaded OK
+    if (!$cv_file) { 
+      form_set_error('cv', t('A file must be uploaded'));
+    } else if (!$cover_file) { 
+      form_set_error('cover_letter', t('A file must be uploaded'));
+    } else {
+      // set files to form_state, to process when form is submitted
+      $form_state['values']['cv'] = $cv_file;
+      $form_state['values']['cover_letter'] = $cover_file;
+    } 
+}
+
+function cv_form_submit($form, &$form_state){
+	//$file = file_load($form_state['values']['excel_upload']->fid);
+	//$file->status = FILE_STATUS_PERMANENT;
+	//file_save($file);
+	global $base_url;
+	$t = time();
+	$today = date("Y-m-d h:i:s",$t);
+	$name = $form_state['values']['name'];
+	$email = $form_state['values']['email_address'];
+	$position = $form_state['values']['position'];
+	$cv_filename = str_replace("public://", "", $form_state['values']['cv']->uri);
+	$cover_filename = str_replace("public://", "", $form_state['values']['cover_letter']->uri);
+	
+	$cv = entity_create('cv', array());
+	$cv->name = $name;
+	$cv->email = $email;
+	$cv->position = $position;
+	$cv->cv = $cv_filename;
+	$cv->cover = $cover_filename;
+	$cv->created = $today;
+	$cv->updated = $today;
+	$cv->save();
+	
+	// send email
+	$to1 = variable_get('contact_email1');
+	$to2 = variable_get('contact_email2');
+	$to3 = variable_get('contact_email3');
+	$to4 = variable_get('contact_email4');
+	$to5 = variable_get('contact_email5');
+	$subject = $name.' Submit the Career Application Form as'.$position;
+	$message = "Name: ".$name.
+		"<br />Email: ".$email.
+		"<br />Position: ".$position;
+	$headers = "MIME-Version: 1.0" . "\r\n";
+	$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
+	$headers .= "From: <".$email.">" . "\r\n";
+
+	if (isset($to1)) $sent_email = mail($to1,$subject,$message,$headers);
+	if (isset($to2)) $sent_email = mail($to2,$subject,$message,$headers);
+	if (isset($to3)) $sent_email = mail($to3,$subject,$message,$headers);
+	if (isset($to4)) $sent_email = mail($to4,$subject,$message,$headers);
+	if (isset($to5)) $sent_email = mail($to5,$subject,$message,$headers);
+	//if ($sent_email) $success = 1;
+
+	drupal_set_message("Email succesfully sent", 'notice');
+	drupal_goto($base_url."/career");
+}
+
+function career() {
+	global $base_url;
+	$form = drupal_get_form('cv_form');
+	$arg0 = arg(0);
+	$nid = arg(1);
+	if (empty($nid)) { // get default career page
+		$query = "SELECT nid FROM node WHERE type='career' LIMIT 1";
+		$nid = db_query($query)->fetchField();
+	}
+	if (!empty($nid)) {
+	$node = node_load($nid);
+	return theme('cnf_career', array('content' => $node, 'form' => $form));
+	} else {
+		return 'No Career found';
+	}
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cnf_career_theme($existing, $type, $theme, $path) {
+    return array(
+      'cnf_career' => array(
+        'variables' => array('content' => NULL, 'form' => NULL),
+        'template' => 'cnf_career', // place you file in 'theme' folder of you module folder
+        'path' => drupal_get_path('module', 'cnf_career')
+      )
+    );
+}
+
+function cnf_career_block_info() {
+  $blocks['career_menu'] = array('info' => t('Career Menu'));
+  return $blocks;
+}
+
+function cnf_career_block_view($delta='') {
+  $block = array();
+  switch ($delta) {
+		case 'career_menu':
+      $block['subject'] = t('');
+      $block['content'] = _career_menu();
+      break;
+  }
+  return $block;
+}
+
+function _career_menu() {
+	global $base_url;
+	$arg0 = arg(0);
+	$arg1 = arg(1);
+	if ($arg0 == 'career') {
+		if (empty($arg1)) { // get default career page
+			$query = "SELECT nid FROM node WHERE type='career' LIMIT 1";
+			$arg1 = db_query($query)->fetchField();
+		}
+		$query = "SELECT nid, title FROM node WHERE type='career'";
+		$result = db_query($query);
+		$output = '<ul class="sidebar-menu">';
+		foreach($result as $row) {
+			$alias = drupal_lookup_path('alias',"node/".$row->nid);
+			$active1 = '';
+			if ($arg1 == $row->nid) $active1 = 'class="active"';
+				$output .= '<li '.$active1.'><a title="'.$row->title.'" href="'.$base_url.'/career/'.$row->nid.'">'.$row->title.'</a></li>';
+		}
+		$output .= '</ul>';
+		return $output;
+	}
+}
+
+?>

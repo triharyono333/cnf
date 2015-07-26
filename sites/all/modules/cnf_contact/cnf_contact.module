@@ -1,0 +1,118 @@
+<?php
+
+// $Id$
+
+function cnf_contact_menu() {
+    
+	$items['contact'] = array(
+		'title' => t('Contact'),
+		'description' => 'contact',
+		'page callback' => 'contact',
+		'access arguments' => true,
+		'access callback' => true,
+		'type' =>  MENU_CALLBACK,
+	);   
+	return $items;
+}
+
+function contact_form($form, &$form_state) {
+    $form['name'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array('placeholder' => t('Enter your name')),
+    );
+    $form['company'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array('placeholder' => t('Company/Organization')),
+    );
+    $form['email_address'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array('placeholder' => t('Enter your email')),
+    );
+    $form['address'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array('placeholder' => t('Enter your address')),
+    );
+    $form['phone'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array('placeholder' => t('Enter your phone')),
+    );
+    $form['how_do_you_know'] = array(
+      '#type' => 'select',
+			'#options' => array('1', '2', '3')
+    );
+		$form['subject'] = array(
+      '#type' => 'textfield',
+      '#attributes' => array('placeholder' => t('Enter your subject')),
+    );
+    $form['message'] = array(
+      '#type' => 'textarea',
+      '#attributes' => array('placeholder' => t('Send message')),
+			'#rows' => '10'
+    );
+    $form['captcha'] = array(
+      '#type' => 'captcha',
+      '#captcha_type' => 'image_captcha/Image',
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Send',
+    );
+
+    return $form;
+}
+
+function contact_form_submit($form, &$form_state) {
+	global $base_url;
+	$name = $form['name']['#value'];
+	$company = $form['company']['#value'];
+	$phone = $form['phone']['#value'];
+	$address = $form['address']['#value'];
+	$how_do_you_know = $form['how_do_you_know']['#value'];
+	$email = $form['email_address']['#value'];
+	$subject = $form['subject']['#value'];
+	$cmessage = $form['message']['#value'];
+
+	// send email
+	$to1 = variable_get('contact_email1');
+	$to2 = variable_get('contact_email2');
+	$to3 = variable_get('contact_email3');
+	$to4 = variable_get('contact_email4');
+	$to5 = variable_get('contact_email5');
+	$subject = $subject;
+	$message = "Name: ".$name.
+		"<br />Email: ".$email.
+		"<br />Company: ".$company.
+		"<br />Phone: ".$phone.
+		"<br />How do you know us: ".$how_do_you_know.
+		"<br />Address: <br />".$address.
+		"<br />Message: <br />".$cmessage;	
+	$headers = "MIME-Version: 1.0" . "\r\n";
+	$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
+	$headers .= "From: <".$email.">" . "\r\n";
+
+	if (isset($to1)) $sent_email = mail($to1,$subject,$message,$headers);
+	if (isset($to2)) $sent_email = mail($to2,$subject,$message,$headers);
+	if (isset($to3)) $sent_email = mail($to3,$subject,$message,$headers);
+	if (isset($to4)) $sent_email = mail($to4,$subject,$message,$headers);
+	if (isset($to5)) $sent_email = mail($to5,$subject,$message,$headers);
+	//if ($sent_email) $success = 1;
+
+	drupal_set_message("Email succesfully sent", 'notice');
+	drupal_goto($base_url."/contact");
+}
+
+function contact() {
+	global $base_url;
+	$form = drupal_get_form('contact_form');
+	$output = '<article class="post">
+							<h2 class="entry-title">Contact Us</h2>
+							<p>Simply fill up the form below to ask anything or just augue insuscipit. Pellentesque id erat quis sa sollicitudin. Nulla mattis rsitmet dolor sollicitudi aliquamquae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo lorem.</p>
+							<div class="post-content">'
+							.drupal_render($form).
+						'	</div>
+						</article>';
+
+	return $output;
+}
+
+?>
