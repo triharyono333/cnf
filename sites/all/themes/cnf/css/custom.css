@@ -375,63 +375,80 @@
 .store-locator .google-store-locator-map {
   border: 1px solid #f2f2f2;
   margin-bottom: 25px; }
-.store-locator .google-store-locator-panel .form-inline .input-text, .store-locator .google-store-locator-panel .form-inline .btn {
+.store-locator .storelocator-panel .input-text, .store-locator .storelocator-panel .btn {
   line-height: 30px;
   height: 31px;
   -webkit-border-radius: 0 0 0 0;
   -moz-border-radius: 0 0 0 0;
   -ms-border-radius: 0 0 0 0;
   border-radius: 0 0 0 0; }
-.store-locator .google-store-locator-panel .form-inline .input-text {
+.store-locator .storelocator-panel .input-text {
   background: #fff;
   border: 1px solid #ccc;
   padding-left: 10px;
   padding-right: 10px; }
-  .store-locator .google-store-locator-panel .form-inline .input-text:focus {
+  .store-locator .storelocator-panel .input-text:focus {
     border-color: #ef262e; }
-.store-locator .google-store-locator-panel .form-inline .form-group {
-  margin-right: -3px; }
-  .store-locator .google-store-locator-panel .form-inline .form-group:not(.box) {
-    margin-bottom: 0; }
-.store-locator .google-store-locator-panel .form-inline p.help-block {
+.store-locator .storelocator-panel .form-group:not(.box) {
+  margin-bottom: 0; }
+.store-locator .storelocator-panel p.help-block {
   margin-top: 0;
   font-weight: 700;
   color: #333; }
-.store-locator .location {
-  padding-left: 65px;
-  position: relative; }
-  .store-locator .location h5 {
-    color: #ef232c;
-    font-weight: 700;
-    margin: 5px 0 0; }
-  .store-locator .location p, .store-locator .location address {
-    font-size: 13px; }
-  .store-locator .location p {
-    margin: 0; }
-  .store-locator .location .marker {
-    position: absolute;
-    left: 15px;
-    top: 0; }
-    .store-locator .location .marker.fa-map-marker:before {
+.store-locator .store-list li {
+  padding: 15px 0;
+  margin: 0;
+  font-size: 14px;
+  border-bottom: 3px solid #f2f2f2; }
+  .store-locator .store-list li.store {
+    position: relative; }
+    .store-locator .store-list li.store:before {
+      font-family: 'FontAwesome';
       font-size: 50px;
       position: absolute;
-      color: #ef232c; }
-    .store-locator .location .marker.fa-map-marker span {
-      position: absolute;
-      width: 28px;
-      text-align: center;
-      color: #fff;
-      top: 12px;
-      font-size: 14px;
-      font-family: 'Lato', sans-serif;
-      font-weight: 400; }
-      .store-locator .location .marker.fa-map-marker span.red-bg {
-        background: #ef232c;
-        display: block;
-        width: 17px;
-        height: 18px;
-        left: 5px;
-        top: 8px; }
+      color: #ef232c;
+      content: "\f041";
+      top: 20px;
+      left: 5px;
+      line-height: 50px; }
+    .store-locator .store-list li.store .title {
+      color: #ef232c;
+      font-weight: 700;
+      margin: 5px 0 0; }
+    .store-locator .store-list li.store .address {
+      font-size: 13px; }
+    .store-locator .store-list li.store > .store {
+      margin-left: 50px; }
+  .store-locator .store-list li.no-stores {
+    padding: 0;
+    font-size: 13px;
+    color: #ef262e; }
+  .store-locator .store-list li:hover {
+    background: none; }
+.store-locator .store-list .marker {
+  position: absolute;
+  left: 15px;
+  top: 0; }
+  .store-locator .store-list .marker.fa-map-marker:before {
+    font-size: 50px;
+    position: absolute;
+    color: #ef232c; }
+  .store-locator .store-list .marker.fa-map-marker span {
+    position: absolute;
+    width: 28px;
+    text-align: center;
+    color: #fff;
+    top: 12px;
+    font-size: 14px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400; }
+    .store-locator .store-list .marker.fa-map-marker span.red-bg {
+      background: #ef232c;
+      display: block;
+      width: 17px;
+      height: 18px;
+      left: 5px;
+      top: 8px; }
 
 .modal-backdrop.in {
   filter: alpha(opacity=77);
