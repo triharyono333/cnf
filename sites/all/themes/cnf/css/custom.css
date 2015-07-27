@@ -372,28 +372,28 @@
   padding-bottom: 0; }
   .store-locator .blog-posts .post-classic .post-content {
     padding-bottom: 0; }
-.store-locator .display-maps {
+.store-locator .google-store-locator-map {
   border: 1px solid #f2f2f2;
   margin-bottom: 25px; }
-.store-locator .search-location .form-inline .input-text, .store-locator .search-location .form-inline .btn {
+.store-locator .google-store-locator-panel .form-inline .input-text, .store-locator .google-store-locator-panel .form-inline .btn {
   line-height: 30px;
   height: 31px;
   -webkit-border-radius: 0 0 0 0;
   -moz-border-radius: 0 0 0 0;
   -ms-border-radius: 0 0 0 0;
   border-radius: 0 0 0 0; }
-.store-locator .search-location .form-inline .input-text {
+.store-locator .google-store-locator-panel .form-inline .input-text {
   background: #fff;
   border: 1px solid #ccc;
   padding-left: 10px;
   padding-right: 10px; }
-  .store-locator .search-location .form-inline .input-text:focus {
+  .store-locator .google-store-locator-panel .form-inline .input-text:focus {
     border-color: #ef262e; }
-.store-locator .search-location .form-inline .form-group {
+.store-locator .google-store-locator-panel .form-inline .form-group {
   margin-right: -3px; }
-  .store-locator .search-location .form-inline .form-group:not(.box) {
+  .store-locator .google-store-locator-panel .form-inline .form-group:not(.box) {
     margin-bottom: 0; }
-.store-locator .search-location .form-inline p.help-block {
+.store-locator .google-store-locator-panel .form-inline p.help-block {
   margin-top: 0;
   font-weight: 700;
   color: #333; }
