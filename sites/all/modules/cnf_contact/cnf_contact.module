@@ -78,7 +78,7 @@ function contact_form_submit($form, &$form_state) {
 	$to3 = variable_get('contact_email3');
 	$to4 = variable_get('contact_email4');
 	$to5 = variable_get('contact_email5');
-	$subject = $subject;
+	$subject = 'Contact Us - '.$subject;
 	$message = "Name: ".$name.
 		"<br />Email: ".$email.
 		"<br />Company: ".$company.
@@ -88,17 +88,44 @@ function contact_form_submit($form, &$form_state) {
 		"<br />Message: <br />".$cmessage;	
 	$headers = "MIME-Version: 1.0" . "\r\n";
 	$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
-	$headers .= "From: <".$email.">" . "\r\n";
+	$headers .= "From: heri_pires@yahoo.com" . "\r\n";
 
-	if (isset($to1)) $sent_email = mail($to1,$subject,$message,$headers);
+	/*if (isset($to1)) {
+		$sent_email = mail($to1,$subject,$message,$headers); 
+		//var_dump($sent_email);
+		//print $headers; exit;
+	}
 	if (isset($to2)) $sent_email = mail($to2,$subject,$message,$headers);
 	if (isset($to3)) $sent_email = mail($to3,$subject,$message,$headers);
 	if (isset($to4)) $sent_email = mail($to4,$subject,$message,$headers);
-	if (isset($to5)) $sent_email = mail($to5,$subject,$message,$headers);
+	if (isset($to5)) $sent_email = mail($to5,$subject,$message,$headers);*/
 	//if ($sent_email) $success = 1;
+
+  //params is the array passed to hook_mail function 
+	$from = 'noreply@cnfperfumery.com';
+  $params = array(
+	  'subject' => $subject,
+	  'body' => $message,
+	  );
+
+	if (!empty($to1)) drupal_mail('cnf_contact', 'information', $to1, language_default(), $params, $from);
+	if (!empty($to2)) drupal_mail('cnf_contact', 'information', $to2, language_default(), $params, $from);
+	if (!empty($to3)) drupal_mail('cnf_contact', 'information', $to3, language_default(), $params, $from);
+	if (!empty($to4)) drupal_mail('cnf_contact', 'information', $to4, language_default(), $params, $from);
+	if (!empty($to5)) drupal_mail('cnf_contact', 'information', $to5, language_default(), $params, $from);
+  
 
 	drupal_set_message("Email succesfully sent", 'notice');
 	drupal_goto($base_url."/contact");
+}
+
+function cnf_contact_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'information':
+      $message['subject'] = $params['subject'];
+      $message['body'] = array(0=>$params['body']);
+    break;
+    }
 }
 
 function contact() {
