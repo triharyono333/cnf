@@ -23,12 +23,10 @@
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						</div>
 						<div class="modal-body">
-							<div class="section-info">
-								<div class="soap-gallery owl-carousel style1">
-									<?php foreach($press->field_press_coverage_image[LANGUAGE_NONE] as $image) { ?>
-									<img src="<?php print file_create_url($image['uri']) ?>" alt="" data-thumb="<?php print file_create_url($image['uri']) ?>">
-									<?php } ?>
-								</div>
+							<div class="soap-gallery owl-carousel style3 owl-theme">
+								<?php foreach($press->field_press_coverage_image[LANGUAGE_NONE] as $image) { ?>
+								<img src="<?php print file_create_url($image['uri']) ?>" alt="">
+								<?php } ?>
 							</div>
 						</div>
 					</div>
