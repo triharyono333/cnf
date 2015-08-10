@@ -24,9 +24,9 @@
 						</div>
 						<div class="modal-body">
 							<div class="section-info">
-								<div class="soap-gallery style2 thumbnail-full">
+								<div class="soap-gallery owl-carousel style1">
 									<?php foreach($press->field_press_coverage_image[LANGUAGE_NONE] as $image) { ?>
-									<img class="sgImg" src="<?php print file_create_url($image['uri']) ?>" alt="" data-thumb="<?php print file_create_url($image['uri']) ?>">
+									<img src="<?php print file_create_url($image['uri']) ?>" alt="" data-thumb="<?php print file_create_url($image['uri']) ?>">
 									<?php } ?>
 								</div>
 							</div>
