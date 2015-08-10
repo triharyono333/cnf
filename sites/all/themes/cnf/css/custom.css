@@ -367,6 +367,9 @@
         .blog-posts.products .modal-content .modal-body .description .nav-tabs li:before, .blog-posts.news-events .modal-content .modal-body .description .nav-tabs li:before {
           content: " ";
           margin-right: 0; }
+    .blog-posts.products .modal-content .modal-body .owl-carousel, .blog-posts.news-events .modal-content .modal-body .owl-carousel {
+      width: 500px;
+      margin: auto; }
 
 .store-locator .blog-posts .post-classic {
   padding-bottom: 0; }
