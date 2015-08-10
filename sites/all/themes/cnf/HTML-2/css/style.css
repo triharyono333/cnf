@@ -3143,7 +3143,6 @@ ul.filter-categories > li {
 
 /* 3.3. Page Title Container ~~~~~~~~~~~~~~~~~~~~~~~ */
 .page-title-container {
-  background: url(../images/inner/style1-pattern.png) repeat;
   position: relative;
   overflow: visible; }
   .page-title-container .entry-title {
