@@ -216,8 +216,19 @@
   .row.add-clearfix > .col-sms-6 {
     &:nth-child(2n+1) { clear: both; }
   }
-}
 
+}
+@media (max-width: 600px) {
+  .blog-posts {
+    &.news-events {
+      .modal-content {
+        .modal-body {
+          .owl-carousel { width: 100%; }
+        }
+      }
+    }
+  }
+}
 @media (min-width: 768px) {
   
   /* add clearfix in the grid system */
