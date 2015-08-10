@@ -364,3 +364,14 @@
 		.copyright-area { color: #fff; border-top: 1px solid #fff;}
 	}
 }
+
+.owl-controls {
+	.owl-buttons {
+		.owl-prev, .owl-next {
+			&:before { background: #666; border-color: #666; @include opacity(0.6);}
+			&:hover {
+				&:before { background: #ef262e; border-color: #ef262e; @include opacity(1)}
+			}
+		}
+	}
+}

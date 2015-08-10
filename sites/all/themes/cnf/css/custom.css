@@ -553,4 +553,21 @@
     color: #fff;
     border-top: 1px solid #fff; }
 
+.owl-controls .owl-buttons .owl-prev:before, .owl-controls .owl-buttons .owl-next:before {
+  background: #666;
+  border-color: #666;
+  filter: alpha(opacity=60);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+  -moz-opacity: 0.6;
+  -khtml-opacity: 0.6;
+  opacity: 0.6; }
+.owl-controls .owl-buttons .owl-prev:hover:before, .owl-controls .owl-buttons .owl-next:hover:before {
+  background: #ef262e;
+  border-color: #ef262e;
+  filter: alpha(opacity=100);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+  -moz-opacity: 1;
+  -khtml-opacity: 1;
+  opacity: 1; }
+
 /*# sourceMappingURL=custom.css.map */
