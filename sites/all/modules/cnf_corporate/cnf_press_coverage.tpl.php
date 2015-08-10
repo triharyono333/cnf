@@ -8,7 +8,7 @@
 			<article class="post post-grid">
 				<div class="post-image">
 					<div class="image-container">
-						<a href="#" data-toggle="modal" data-target="#myModal"><img alt="" src="<?php print file_create_url($press->field_press_coverage_image[LANGUAGE_NONE][0]['uri']) ?>"></a>
+						<a href="#" data-toggle="modal" data-target="#myModal-<?php print $press->nid ?>"><img alt="" src="<?php print file_create_url($press->field_press_coverage_image[LANGUAGE_NONE][0]['uri']) ?>"></a>
 					</div>
 				</div>
 				<div class="post-content">
@@ -16,7 +16,7 @@
 				</div>
 			</article>
 			<!-- modal -->
-			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal fade" id="myModal-<?php print $press->nid ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 				<div class="modal-dialog modal-lg" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
