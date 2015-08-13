@@ -371,6 +371,10 @@
     .blog-posts.products .modal-content .modal-body .owl-carousel, .blog-posts.news-events .modal-content .modal-body .owl-carousel {
       width: 500px;
       margin: auto; }
+.blog-posts.products .post-grid .post-content h4.entry-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
 
 .store-locator .blog-posts .post-classic {
   padding-bottom: 0; }
