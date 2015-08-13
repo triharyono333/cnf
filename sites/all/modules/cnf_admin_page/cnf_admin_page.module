@@ -57,6 +57,12 @@ function other_setting_form($form, &$form_state) {
 			'#title' => 'Contact Email 5',
 			'#default_value' => variable_get('contact_email5'),
 	);
+	$form['how_do_you_know_us'] = array(
+			'#type' => 'textarea', 
+			'#title' => 'How Do You Know Us',
+			#'#type' => 'text_format',
+			'#default_value' => variable_get('how_do_you_know_us'),
+	);
 	$form['office_address'] = array(
 			'#type' => 'textfield', 
 			'#title' => 'Office Address',
@@ -93,12 +99,13 @@ function other_setting_form($form, &$form_state) {
 }
 
 function other_setting_form_submit($form, &$form_state) {
-	//print "<pre>".print_r($form['footer_text']['value']['#value'], true)."</pre>"; exit;
+	//print "<pre>".print_r($form['how_do_you_know_us']['value']['#value'], true)."</pre>"; exit;
 	$contact_email1 = variable_set('contact_email1', $form['contact_email1']['#value']);
 	$contact_email2 = variable_set('contact_email2', $form['contact_email2']['#value']);
 	$contact_email3 = variable_set('contact_email3', $form['contact_email3']['#value']);
 	$contact_email4 = variable_set('contact_email4', $form['contact_email4']['#value']);
 	$contact_email5 = variable_set('contact_email5', $form['contact_email5']['#value']);
+	$how_do_you_know_us = variable_set('how_do_you_know_us', $form['how_do_you_know_us']['#value']);
 	$office_address = variable_set('office_address', $form['office_address']['value']['#value']);
 	$twitter = variable_set('twitter', $form['twitter']['#value']);
 	$facebook = variable_set('facebook', $form['facebook']['#value']);

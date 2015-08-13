@@ -58,7 +58,7 @@ $arg0 = arg(0);
 											<h4><em>career</em> with us</h4>
 											<a class="read-more" href="#">read more</a>
 										</div>
-										<a href="#" class="post-gallery"></a>
+										<a href="<?php print $base_url ?>/career" class="post-gallery"></a>
 									</div>
 								</div>
 							</div>
@@ -74,7 +74,7 @@ $arg0 = arg(0);
 											<h4><em>new</em> stores</h4>
 											<a class="read-more" href="#">check out</a>
 										</div>
-										<a href="#" class="post-gallery"></a>
+										<a href="<?php print $base_url ?>/store-locator" class="post-gallery"></a>
 									</div>
 								</div>
 							</div>

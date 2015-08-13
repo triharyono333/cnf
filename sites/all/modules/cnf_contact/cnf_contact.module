@@ -16,49 +16,54 @@ function cnf_contact_menu() {
 }
 
 function contact_form($form, &$form_state) {
-    $form['name'] = array(
-      '#type' => 'textfield',
-      '#attributes' => array('placeholder' => t('Enter your name')),
-    );
-    $form['company'] = array(
-      '#type' => 'textfield',
-      '#attributes' => array('placeholder' => t('Company/Organization')),
-    );
-    $form['email_address'] = array(
-      '#type' => 'textfield',
-      '#attributes' => array('placeholder' => t('Enter your email')),
-    );
-    $form['address'] = array(
-      '#type' => 'textfield',
-      '#attributes' => array('placeholder' => t('Enter your address')),
-    );
-    $form['phone'] = array(
-      '#type' => 'textfield',
-      '#attributes' => array('placeholder' => t('Enter your phone')),
-    );
-    $form['how_do_you_know'] = array(
-      '#type' => 'select',
-			'#options' => array('1', '2', '3')
-    );
-		$form['subject'] = array(
-      '#type' => 'textfield',
-      '#attributes' => array('placeholder' => t('Enter your subject')),
-    );
-    $form['message'] = array(
-      '#type' => 'textarea',
-      '#attributes' => array('placeholder' => t('Send message')),
-			'#rows' => '10'
-    );
-    $form['captcha'] = array(
-      '#type' => 'captcha',
-      '#captcha_type' => 'image_captcha/Image',
-    );
-    $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => 'Send',
-    );
+	$option = array();
+	$how_do_you_know_us = explode("|", variable_get('how_do_you_know_us'));
+	foreach($how_do_you_know_us as $data) {
+		$option[$data] = $data;
+	}
+	$form['name'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder' => t('Enter your name')),
+	);
+	$form['company'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder' => t('Company/Organization')),
+	);
+	$form['email_address'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder' => t('Enter your email')),
+	);
+	$form['address'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder' => t('Enter your address')),
+	);
+	$form['phone'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder' => t('Enter your phone')),
+	);
+	$form['how_do_you_know'] = array(
+		'#type' => 'select',
+		'#options' => $option
+	);
+	$form['subject'] = array(
+		'#type' => 'textfield',
+		'#attributes' => array('placeholder' => t('Enter your subject')),
+	);
+	$form['message'] = array(
+		'#type' => 'textarea',
+		'#attributes' => array('placeholder' => t('Send message')),
+		'#rows' => '10'
+	);
+	$form['captcha'] = array(
+		'#type' => 'captcha',
+		'#captcha_type' => 'image_captcha/Image',
+	);
+	$form['submit'] = array(
+			'#type' => 'submit',
+			'#value' => 'Send',
+	);
 
-    return $form;
+	return $form;
 }
 
 function contact_form_submit($form, &$form_state) {

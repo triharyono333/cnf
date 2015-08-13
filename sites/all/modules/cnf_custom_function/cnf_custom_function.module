@@ -149,9 +149,12 @@ function top_menu() {
 			} else if (strtolower($menu['link_title'])=='make up') {
 				$submenu = _generate_product_submenu('make_up');
 			}		
+			
+			if ($menu['link_path'] == 'corporate') $menu_link_path = '#';
+			else $menu_link_path = $base_url.'/'.$menu['link_path'];
 			$output .= '
 				<li class="menu-item-has-children '.$active.'"><span class="open-subnav"></span>
-					<a href="'.$base_url.'/'.$menu['link_path'].'">'.$menu['link_title'].'</a>
+					<a href="'.$menu_link_path.'">'.$menu['link_title'].'</a>
 					'.$submenu.'
 				</li>';
 		} else {
