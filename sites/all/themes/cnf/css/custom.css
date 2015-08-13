@@ -210,7 +210,8 @@
     display: inline-block;
     width: 19%;
     text-align: center;
-    margin-bottom: 2px; }
+    margin-bottom: 2px;
+    margin-right: 2px; }
     .sidebar .sidebar-menu.indexing li a {
       padding: 12px 0; }
 .sidebar ul.archives {
