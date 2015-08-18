@@ -375,6 +375,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; }
+.blog-posts.news-events .modal-content .modal-body {
+  background: none;
+  -webkit-box-shadow: 0 5px 15px transparent;
+  -moz-box-shadow: 0 5px 15px transparent;
+  box-shadow: 0 5px 15px transparent;
+  padding: 10px 0 0; }
 
 .store-locator .blog-posts .post-classic {
   padding-bottom: 0; }
