@@ -22,8 +22,9 @@ function news_event() {
 	$archive_year = arg(2);
 	
 	if (empty($archive_month) && empty($archive_year)) {
-		$query = "SELECT MONTH(FROM_UNIXTIME(created)) as month, YEAR(FROM_UNIXTIME(created)) as year FROM node "
-							. "WHERE type='event' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
+		$query = "SELECT MONTH(FROM_UNIXTIME(field_event_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_event_date_value) + INTERVAL 12 HOUR) as year "
+							. "FROM node a, field_data_field_event_date b "
+							. "WHERE a.nid = b.entity_id AND type='event' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
 		$result = db_query($query);
 		foreach ($result as $archive) {
 			$archive_month = $archive->month;
@@ -31,13 +32,9 @@ function news_event() {
 		}
 	}
 	if (isset($archive_month) && isset($archive_year)) {
-		$archive_query = " AND MONTH(FROM_UNIXTIME(created)) = '".$archive_month."' AND YEAR(FROM_UNIXTIME(created)) = '".$archive_year."'";
-		$query = "SELECT COUNT(nid) FROM node WHERE type = 'event'".$archive_query;
-		$total = db_query($query)->fetchField();
-		pager_default_initialize($total,ITEM_PER_PAGE);
-
-
-		$query = "SELECT nid FROM node WHERE type='event'".$archive_query;
+		$archive_query = " AND MONTH(FROM_UNIXTIME(field_event_date_value) + INTERVAL 12 HOUR) = '".$archive_month."' AND YEAR(FROM_UNIXTIME(field_event_date_value) + INTERVAL 12 HOUR) = '".$archive_year."'";
+		$query = "SELECT nid FROM node a, field_data_field_event_date b"
+						. " WHERE a.nid = b.entity_id AND type='event' ".$archive_query." ORDER BY field_event_date_value DESC";
 		$result = db_query_range($query, $page, ITEM_PER_PAGE);
 		foreach ($result as $news) {
 			 $node_nids[] = $news->nid;
@@ -90,8 +87,9 @@ function _news_archive(){
 			$archive_year = arg(2);
 
 			if (empty($archive_month) && empty($archive_year)) {
-				$query = "SELECT MONTH(FROM_UNIXTIME(created)) as month, YEAR(FROM_UNIXTIME(created)) as year FROM node "
-									. "WHERE type='event' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
+				$query = "SELECT MONTH(FROM_UNIXTIME(field_event_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_event_date_value) + INTERVAL 12 HOUR) as year "
+									. "FROM node a, field_data_field_event_date b "
+									. "WHERE a.nid = b.entity_id AND type='event' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
 				$result = db_query($query);
 				foreach ($result as $archive) {
 					$archive_month = $archive->month;
@@ -99,13 +97,16 @@ function _news_archive(){
 				}
 			}
 	
-			$query = "SELECT MONTH(FROM_UNIXTIME(created)) as month, YEAR(FROM_UNIXTIME(created)) as year FROM node "
-							. "WHERE type='event' GROUP BY month, year ORDER by year ASC LIMIT 12";
+			$query = "SELECT MONTH(FROM_UNIXTIME(field_event_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_event_date_value) + INTERVAL 12 HOUR) as year "
+							. "FROM node a, field_data_field_event_date b "
+							. "WHERE a.nid = b.entity_id AND type='event' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 12";
 			$result = db_query($query);
 			$output = '<h4>Archives</h4> <ul class="hover-effect archives">';
 			foreach ($result as $archive) {
-				if ($archive_month == $archive->month && $archive_year == $archive->year) 
-				$output .= '<li class="active"><a href="'.$base_url.'/news_event/'.$archive->month.'/'.$archive->year.'">'.date("F",mktime(0,0,0,$archive->month,1,$archive->year)).' '.$archive->year.'</a></li>';
+				if ($archive_month == $archive->month && $archive_year == $archive->year) $active = 'class="active"';
+				else $active = '';
+				$output .= '<li '.$active.'>'
+					. '<a href="'.$base_url.'/news_event/'.$archive->month.'/'.$archive->year.'">'.date("F",mktime(0,0,0,$archive->month,1,$archive->year)).' '.$archive->year.'</a></li>';
 			}
 			$output .= '</ul>';
 

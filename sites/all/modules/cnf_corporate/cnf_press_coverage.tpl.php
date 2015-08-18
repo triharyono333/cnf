@@ -12,7 +12,7 @@
 					</div>
 				</div>
 				<div class="post-content">
-					<h4 class="entry-title"><a href="#" data-toggle="modal" data-target="#myModal"><?php print $press->title ?> - <?php print $content['month_name'].' '.$content['year'] ?></a></h4>
+					<h4 class="entry-title"><a href="#" data-toggle="modal" data-target="#myModal"><?php print $press->title ?> - <?php print date('d F Y', $press->field_press_coverate_date[LANGUAGE_NONE][0]['value']) ?></a></h4>
 				</div>
 			</article>
 			<!-- modal -->

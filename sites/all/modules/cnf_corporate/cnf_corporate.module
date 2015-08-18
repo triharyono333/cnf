@@ -34,7 +34,7 @@ function press_coverage() {
 	$archive_year = arg(3);
 	
 	if (empty($archive_month) && empty($archive_year)) {
-		$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value)) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value)) as year "
+		$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as year "
 							. "FROM node a, field_data_field_press_coverate_date b "
 							. "WHERE a.nid = b.entity_id AND type='press_coverage' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
 		$result = db_query($query);
@@ -44,14 +44,14 @@ function press_coverage() {
 		}
 	}
 	if (isset($archive_month) && isset($archive_year)) {
-		$archive_query = " AND MONTH(FROM_UNIXTIME(field_press_coverate_date_value)) = '".$archive_month."' AND YEAR(FROM_UNIXTIME(field_press_coverate_date_value)) = '".$archive_year."'";
+		$archive_query = " AND MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) = '".$archive_month."' AND YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) = '".$archive_year."'";
 		/*$query = "SELECT COUNT(nid) FROM node a, field_data_field_press_coverate_date b"
 							. " WHERE a.nid = b.entity_id AND type='press_coverage' ".$archive_query;
 		$total = db_query($query)->fetchField();
 		pager_default_initialize($total,ITEM_PER_PAGE);*/
 
 		$query = "SELECT nid FROM node a, field_data_field_press_coverate_date b"
-						. " WHERE a.nid = b.entity_id AND type='press_coverage' ".$archive_query;
+						. " WHERE a.nid = b.entity_id AND type='press_coverage' ".$archive_query." ORDER BY field_press_coverate_date_value DESC";
 		$result = db_query_range($query, $page, ITEM_PER_PAGE);
 		foreach ($result as $news) {
 			 $node_nids[] = $news->nid;
@@ -130,7 +130,7 @@ function _press_coverage_archive(){
 			$archive_year = arg(3);
 
 			if (empty($archive_month) && empty($archive_year)) {
-				$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value)) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value)) as year "
+				$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as year "
 									. "FROM node a, field_data_field_press_coverate_date b "
 									. "WHERE a.nid = b.entity_id AND type='press_coverage' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
 				$result = db_query($query);
@@ -140,7 +140,7 @@ function _press_coverage_archive(){
 				}
 			}
 	
-			$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value)) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value)) as year "
+			$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as year "
 							. "FROM node a, field_data_field_press_coverate_date b "
 							. "WHERE a.nid = b.entity_id AND type='press_coverage' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 12";
 			$result = db_query($query);
