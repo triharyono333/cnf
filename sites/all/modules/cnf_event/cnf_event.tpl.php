@@ -11,8 +11,8 @@
 					</div>
 				</div>
 				<div class="post-content col-md-9 col-sm-8">
-					<h3 class="entry-title"><a href="#"><?php print $news->title ?> - <?php print date('d F Y', $news->created) ?></a></h3>
-					<p><?php print $news->body[LANGUAGE_NONE][0]['summary'] ?></p>
+					<h3 class="entry-title"><a href="#"><?php print $news->title ?> - <?php print date('d F Y', $news->field_event_date[LANGUAGE_NONE][0]['value']) ?></a></h3>
+					<p><?php print $news->body[LANGUAGE_NONE][0]['value'] ?></p>
 					<a href="#" data-toggle="modal" data-target="#myModal-<?php print $news->nid ?>" class="btn read-more">Read More</a>
 				</div>
 			</div>
