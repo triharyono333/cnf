@@ -138,7 +138,7 @@ function contact() {
 	$form = drupal_get_form('contact_form');
 	$output = '<article class="post">
 							<h2 class="entry-title">Contact Us</h2>
-							<p>Simply fill up the form below to ask anything or just augue insuscipit. Pellentesque id erat quis sa sollicitudin. Nulla mattis rsitmet dolor sollicitudi aliquamquae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo lorem.</p>
+							<p>'.variable_get('contact_text').'</p>
 							<div class="post-content">'
 							.drupal_render($form).
 						'	</div>

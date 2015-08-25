@@ -11,7 +11,7 @@ function cnf_corporate_menu() {
 		'type' =>  MENU_CALLBACK,
 	);
 	
-	$items['corporate/press_coverage'] = array(
+	$items['press_coverage'] = array(
 		'title' => t('Press Coverage'),
 		'description' => 'Press Coverage',
 		'page callback' => 'press_coverage',
@@ -30,39 +30,23 @@ function corporate() {
 function press_coverage() {
 	global $base_url;
 	$page = $_GET['page'];
-	$archive_month = arg(2);
-	$archive_year = arg(3);
+	$start = $_GET['page'] * ITEM_PER_PAGE;
 	
-	if (empty($archive_month) && empty($archive_year)) {
-		$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as year "
-							. "FROM node a, field_data_field_press_coverate_date b "
-							. "WHERE a.nid = b.entity_id AND type='press_coverage' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
-		$result = db_query($query);
-		foreach ($result as $archive) {
-			$archive_month = $archive->month;
-			$archive_year = $archive->year;
-		}
+	$query = "SELECT nid FROM node a, field_data_field_press_coverate_date b
+						WHERE a.nid = b.entity_id AND type='press_coverage' ORDER BY field_press_coverate_date_value DESC";
+	$query_total = "SELECT count(nid) as total FROM node a, field_data_field_press_coverate_date b
+						WHERE a.nid = b.entity_id AND type='press_coverage' ORDER BY field_press_coverate_date_value DESC"; 
+	$result = db_query_range($query, $start, ITEM_PER_PAGE);
+	foreach ($result as $news) {
+		 $node_nids[] = $news->nid;
 	}
-	if (isset($archive_month) && isset($archive_year)) {
-		$archive_query = " AND MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) = '".$archive_month."' AND YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) = '".$archive_year."'";
-		/*$query = "SELECT COUNT(nid) FROM node a, field_data_field_press_coverate_date b"
-							. " WHERE a.nid = b.entity_id AND type='press_coverage' ".$archive_query;
-		$total = db_query($query)->fetchField();
-		pager_default_initialize($total,ITEM_PER_PAGE);*/
-
-		$query = "SELECT nid FROM node a, field_data_field_press_coverate_date b"
-						. " WHERE a.nid = b.entity_id AND type='press_coverage' ".$archive_query." ORDER BY field_press_coverate_date_value DESC";
-		$result = db_query_range($query, $page, ITEM_PER_PAGE);
-		foreach ($result as $news) {
-			 $node_nids[] = $news->nid;
-		}
-		$content['month_name'] = date('F', mktime(0, 0, 0, $archive_month, 10));
-		$content['year'] = $archive_year;
-		$content['press_coverage'] = node_load_multiple($node_nids);
-		return theme('cnf_press_coverage', array('content' => $content));
-	} else {
-		return 'No Press Coverage';
-	}
+	
+	// paging
+	$total = db_query($query_total)->fetchField();
+	pager_default_initialize($total, ITEM_PER_PAGE);
+		
+	$content['press_coverage'] = node_load_multiple($node_nids);
+	return theme('cnf_press_coverage', array('content' => $content));
 }
 
 /**
@@ -113,48 +97,48 @@ function _corporate_menu() {
 			if ($arg1 == $row->nid) $active1 = 'class="active"';
 				$output .= '<li '.$active1.'><a title="'.$row->title.'" href="'.$base_url.'/'.$alias.'">'.$row->title.'</a></li>';
 		}
-		if ($arg0 == 'corporate' && $arg1 == 'press_coverage') $active2 = 'class="active"';
-		$output .= '<li '.$active2.'><a title="Press Coverage" href="'.$base_url.'/corporate/press_coverage">Press Coverage</a></li>';
+		//if ($arg0 == 'corporate' && $arg1 == 'press_coverage') $active2 = 'class="active"';
+		//$output .= '<li '.$active2.'><a title="Press Coverage" href="'.$base_url.'/corporate/press_coverage">Press Coverage</a></li>';
 		$output .= '</ul>';
 		return $output;
 	}
 }
 
 function _press_coverage_archive(){
-    global $base_url;
-		$arg0 = arg(0);
-		$arg1 = arg(1);
-		$arg2 = arg(2);
-		if ($arg0 == 'corporate' && $arg1 == 'press_coverage') {
-			$archive_month = arg(2);
-			$archive_year = arg(3);
+	global $base_url;
+	$arg0 = arg(0);
+	$arg1 = arg(1);
+	$arg2 = arg(2);
+	if ($arg0 == 'corporate' && $arg1 == 'press_coverage') {
+		$archive_month = arg(2);
+		$archive_year = arg(3);
 
-			if (empty($archive_month) && empty($archive_year)) {
-				$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as year "
-									. "FROM node a, field_data_field_press_coverate_date b "
-									. "WHERE a.nid = b.entity_id AND type='press_coverage' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
-				$result = db_query($query);
-				foreach ($result as $archive) {
-					$archive_month = $archive->month;
-					$archive_year = $archive->year;
-				}
-			}
-	
+		if (empty($archive_month) && empty($archive_year)) {
 			$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as year "
-							. "FROM node a, field_data_field_press_coverate_date b "
-							. "WHERE a.nid = b.entity_id AND type='press_coverage' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 12";
+								. "FROM node a, field_data_field_press_coverate_date b "
+								. "WHERE a.nid = b.entity_id AND type='press_coverage' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 1";
 			$result = db_query($query);
-			$output = '<h4>Archives</h4> <ul class="hover-effect archives">';
 			foreach ($result as $archive) {
-				if ($archive_month == $archive->month && $archive_year == $archive->year) $active = 'class="active"';
-				else $active = '';
-				$output .= '<li '.$active.'>'
-					. '<a href="'.$base_url.'/corporate/press_coverage/'.$archive->month.'/'.$archive->year.'">'.date("F",mktime(0,0,0,$archive->month,1,$archive->year)).' '.$archive->year.'</a></li>';
+				$archive_month = $archive->month;
+				$archive_year = $archive->year;
 			}
-			$output .= '</ul>';
-
-			return $output;
 		}
+
+		$query = "SELECT MONTH(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as month, YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR) as year "
+						. "FROM node a, field_data_field_press_coverate_date b "
+						. "WHERE a.nid = b.entity_id AND type='press_coverage' GROUP BY month, year ORDER by year DESC, month DESC LIMIT 12";
+		$result = db_query($query);
+		$output = '<h4>Archives</h4> <ul class="hover-effect archives">';
+		foreach ($result as $archive) {
+			if ($archive_month == $archive->month && $archive_year == $archive->year) $active = 'class="active"';
+			else $active = '';
+			$output .= '<li '.$active.'>'
+				. '<a href="'.$base_url.'/corporate/press_coverage/'.$archive->month.'/'.$archive->year.'">'.date("F",mktime(0,0,0,$archive->month,1,$archive->year)).' '.$archive->year.'</a></li>';
+		}
+		$output .= '</ul>';
+
+		return $output;
+	}
 }
 
 ?>

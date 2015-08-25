@@ -3,7 +3,7 @@
 // $Id$
 global $base_url;
 define("PATH_TO_FILE", $base_url."/sites/default/files/");
-define("ITEM_PER_PAGE", 10);
+define("ITEM_PER_PAGE", 12);
 
 function cnf_custom_function_menu() {
 	$items['subscribe'] = array(
@@ -132,7 +132,8 @@ function top_menu() {
 		//print $arg1; exit;
 		$submenu = '';
 		if (strtolower($menu['link_title'])=='corporate' || strtolower($menu['link_title'])=='fragrance'
-		|| strtolower($menu['link_title'])=='skin care' || strtolower($menu['link_title'])=='make up') {
+		|| strtolower($menu['link_title'])=='skin care' || strtolower($menu['link_title'])=='make up'
+		|| strtolower($menu['link_path'])=='news_event') {
 			if (strtolower($menu['link_title'])=='corporate') {
 				$submenu = '<ul class="sub-nav">';
 				$query = "SELECT nid, title FROM node WHERE type='corporate'";
@@ -141,14 +142,16 @@ function top_menu() {
 					$alias = drupal_lookup_path('alias',"node/".$row->nid);
 					$submenu .= '<li><a href="'.$base_url.'/'.$alias.'" title="'.$row->title.'">'.$row->title.'</a></li>';
 				}
-				$submenu .= '<li><a href="'.$base_url.'/corporate/press_coverage" title="Press Coverage">Press Coverage</a></li></ul>';
+				$submenu .= '</ul>';
 			} else if (strtolower($menu['link_title'])=='fragrance') {
 				$submenu = _generate_product_submenu('fragrance');
 			} else if (strtolower($menu['link_title'])=='skin care') {
 				$submenu = _generate_product_submenu('skin_care');
 			} else if (strtolower($menu['link_title'])=='make up') {
 				$submenu = _generate_product_submenu('make_up');
-			}		
+			}	else if (strtolower($menu['link_path'])=='news_event') {
+				$submenu = '<ul class="sub-nav"><li><a href="'.$base_url.'/press_coverage" title="Press Coverage">Press Coverage</a></li></ul>';
+			}
 			
 			if ($menu['link_path'] == 'corporate') $menu_link_path = '#';
 			else $menu_link_path = $base_url.'/'.$menu['link_path'];

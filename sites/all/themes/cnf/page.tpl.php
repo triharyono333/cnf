@@ -9,7 +9,7 @@ $arg0 = arg(0);
 			<div class="header-inner">
 				<div class="branding">
 					<h1 class="logo">
-						<a href="index.html"><img src="images/logo@2x.png" alt="" width="165" height="62">C &amp; F</a>
+						<!--<a href="index.html"><img src="images/logo@2x.png" alt="" width="165" height="62">C &amp; F</a>-->
 					</h1>
 				</div>
 				<nav id="nav">

@@ -1,6 +1,6 @@
 <?php //print "<pre>".print_r($content, true)."</pre>";    ?>
 <div class="blog-posts news-events">
-	<h2 class="entry-title">Press Coverage - <?php print $content['month_name'].' '.$content['year'] ?></h2>
+	<h2 class="entry-title">Press Coverage</h2>
 	<div class="row">
 		<?php if (isset($content['press_coverage'])) { ?>
 		<?php foreach ($content['press_coverage'] as $press) { ?>
@@ -12,7 +12,7 @@
 					</div>
 				</div>
 				<div class="post-content">
-					<h4 class="entry-title"><a href="#" data-toggle="modal" data-target="#myModal"><?php print $press->title ?> - <?php print date('d F Y', $press->field_press_coverate_date[LANGUAGE_NONE][0]['value']) ?></a></h4>
+					<h4 class="entry-title"><a href="#" data-toggle="modal" data-target="#myModal"><?php print $press->title ?> - <?php print date('F Y', $press->field_press_coverate_date[LANGUAGE_NONE][0]['value']) ?></a></h4>
 				</div>
 			</article>
 			<!-- modal -->
@@ -38,4 +38,8 @@
 	<?php } else print 'No Press Coverage'; ?>
 		
 	</div>
+</div>
+
+<div class="post-pagination">
+	<?php print theme('pager') ?>
 </div>
