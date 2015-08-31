@@ -11,6 +11,7 @@ function cnf_custom_form_alter_form_alter(&$form, &$form_state, $form_id) {
 								#edit-body-und-0-format { display:none; }
 								#node-admin-content #edit-options  { display:none; }
 								#node-admin-content #edit-filters  { display:none; }
+								#edit-excel-upload-upload-button { visibility: hidden; }
 							</style>";
 		print $style;
 	}
@@ -22,6 +23,9 @@ function cnf_custom_form_alter_form_alter(&$form, &$form_state, $form_id) {
 	}
 	else if($form_id == 'banner_node_form') {
 		$form['actions']['submit']['#submit'][] = 'banner_node_form_submit_handler';
+	}
+	else if($form_id == 'small_banner_node_form') {
+		$form['actions']['submit']['#submit'][] = 'small_banner_node_form_submit_handler';
 	}
 	else if($form_id == 'corporate_node_form') {
 		$form['actions']['submit']['#submit'][] = 'corporate_node_form_submit_handler';
@@ -59,6 +63,10 @@ function career_node_form_submit_handler($form, &$form_state) {
 
 function banner_node_form_submit_handler($form, &$form_state) {
     $form_state['redirect']  = 'admin/banner';   
+}
+
+function small_banner_node_form_submit_handler($form, &$form_state) {
+    $form_state['redirect']  = 'admin/small-banner';   
 }
 
 function corporate_node_form_submit_handler($form, &$form_state) {

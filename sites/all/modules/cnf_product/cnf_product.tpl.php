@@ -32,19 +32,19 @@
 				$how_to_use = $product->field_make_up_how_to_use[LANGUAGE_NONE][0]['value'];
 				$ingredient = $product->field_make_up_ingredient[LANGUAGE_NONE][0]['value'];
 			} else if ($content['product_type'] == 'fragrance') {
-				$brand = _get_brand_name($product->field_fragrance_brand[LANGUAGE_NONE][0]['tid']);
+				$brand = _get_brand_name($product->field_fragrance_brand[LANGUAGE_NONE][0]['value']);
 				$images = $product->field_fragrance_image[LANGUAGE_NONE];
 				$main_image = $product->field_fragrance_image[LANGUAGE_NONE][0]['uri'];
 			}
 			
-			if (isset($images)) {
+			//if (isset($images)) {
 		?>
 		<div class="col-sm-6 col-md-4">
 			<article class="post post-grid">
 				<div class="post-image">
 					<div class="image-container">
 						<a href="#" data-toggle="modal" data-target="#myModal-<?php print $product->product_id ?>">
-								<img alt="" src="<?php print file_create_url($main_image) ?>">
+								<img alt="" src="<?php print (isset($main_image)) ? file_create_url($main_image) : $base_url.'/sites/default/files/default-image.jpg' ?>">
 						</a>
 					</div>
 				</div>
@@ -69,12 +69,16 @@
 										<section id="gallery" class="simplegallery">
 											<div class="image-container-popup">
 												<?php 
+													if (isset($images)) {
 													foreach($images as $key=>$product_image) { 
 														if ($main_image == $product_image['uri']) $display = '';
 														else $display = 'style="display:none"';
 												?>
 													<img class="image_<?php print $key ?>" alt="<?php print $product->title ?>" src="<?php print file_create_url($product_image['uri']) ?>" <?php print $display ?>>
-												<?php } ?>
+												<?php }
+													} else { ?>
+													<img src='<?php print $base_url ?>/sites/default/files/default-image.jpg' />
+													<?php } ?>
 											</div>
 
 											<div class="clear"></div>
@@ -146,7 +150,7 @@
 
 		</div>
 		<?php 
-				}
+				//}
 			} ?>
 		<?php } else { print '<div class="col-sm-6 col-md-4">No product found</div>'; } ?>
 	</div>

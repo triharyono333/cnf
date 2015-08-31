@@ -107,7 +107,7 @@ function contact_form_submit($form, &$form_state) {
 	//if ($sent_email) $success = 1;
 
   //params is the array passed to hook_mail function 
-	$from = 'noreply@cnfperfumery.com';
+	$from = 'triharyono333@gmail.com';
   $params = array(
 	  'subject' => $subject,
 	  'body' => $message,

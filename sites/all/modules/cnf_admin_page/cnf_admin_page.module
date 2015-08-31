@@ -10,6 +10,13 @@ function cnf_admin_page_menu() {
 		'access arguments' => array('access other setting'),
 		'type' =>  MENU_CALLBACK,
 	);
+	$items['admin/home_setting'] = array(
+		'title' => t('Home Setting'),
+		'description' => 'home setting',
+		'page callback' => 'home_setting',
+		'access arguments' => array('access other setting'),
+		'type' =>  MENU_CALLBACK,
+	);
 	return $items;
 }
 
@@ -165,5 +172,70 @@ function other_setting() {
  * END OTHER SETTING 
  ------------------------------------------------------------------------------------------------------------------------- 
  */
+
+function home_setting_form($form, &$form_state) {
+	$form['small_banner1_image'] = array(
+	  '#name' => 'small_banner1_image',
+	  '#type' => 'managed_file',
+	  '#title' => t('Choose an Image File'),
+	  '#description' => t('Recommended Size: 780 x 540px'),
+	  '#upload_location' => 'public://home',
+		'#prefix' => 'test: 2132313123123',
+	  '#upload_validators' => array(
+		'file_validate_extensions' => array('gif png jpg jpeg'),
+	  ),
+	);
+	$form['small_banner1_text'] = array(
+		'#type' => 'textfield', 
+		'#title' => 'Small Banner 1 Text',
+		'#type' => 'text_format',
+		'#default_value' => variable_get('small_banner1_text'),
+	);
+	$form['small_banner2_image'] = array(
+	  '#name' => 'small_banner2_image',
+	  '#type' => 'managed_file',
+	  '#title' => t('Choose an Image File'),
+	  '#description' => t('Recommended Size: 780 x 540px.  Only *.gif, *.png, *.jpg, and *.jpeg images allowed.'),
+	  '#default_value' => variable_get('small_banner2_image', ''),
+	  '#upload_location' => 'public://home',
+	  '#upload_validators' => array(
+		'file_validate_extensions' => array('gif png jpg jpeg'),
+	  ),
+	);
+	$form['small_banner2_text'] = array(
+		'#type' => 'textfield', 
+		'#title' => 'Small Banner 2 Text',
+		'#type' => 'text_format',
+		'#default_value' => variable_get('small_banner2_text'),
+	);
+	$form['submit'] = array(
+		'#type' => 'submit', 
+		'#title' => 'Submit',
+		'#value' => 'Submit'
+	);
+
+	return $form;    
+}
+
+
+function home_setting_form_submit($form, &$form_state) {
+	/*$file1 = file_load($form['small_banner1_image']);
+	$file1->status = FILE_STATUS_PERMANENT;
+	file_save($file1);
+	variable_set('small_banner1_image', $file1->fid);*/
+	variable_set('small_banner1_image', $form['small_banner1_image']['#file']->uri);
+	drupal_set_message("<pre>".print_r($form, true)."</pre>");
+	$small_banner1_text = variable_set('small_banner1_text', $form['small_banner1_text']['value']['#value']);
+	$small_banner2_text = variable_set('small_banner2_text', $form['small_banner2_text']['value']['#value']);
+	drupal_set_message("Save Successfully", "notice");
+}
+
+function home_setting() {
+	$output = "<h1>Home Setting</h1>";
+	$form = drupal_get_form('home_setting_form');
+	$output .= drupal_render($form);
+
+	return $output;
+}
 
 ?>

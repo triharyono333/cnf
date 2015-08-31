@@ -48,38 +48,28 @@ $arg0 = arg(0);
 		<div class="section home-featured">
 			<div class="container">
 				<div class="row">
+					<?php 
+					$small_banner_ids = array('121', '122');
+					$small_banners = node_load_multiple($small_banner_ids); 
+					foreach($small_banners as $small_banner) {
+					?>
 					<div class="col-sm-4">
 						<article class="post post-masonry">
 							<div class="post-image">
 								<div class="image">
-									<img src="http://placehold.it/780x540" alt="">
+									<img src="<?php print file_create_url($small_banner->field_small_banner_image[LANGUAGE_NONE][0]['uri']) ?>" alt="">
 									<div class="image-extras">
 										<div class="image-text">
-											<h4><em>career</em> with us</h4>
-											<a class="read-more" href="#">read more</a>
+											<?php print $small_banner->body[LANGUAGE_NONE][0]['value'] ?>
 										</div>
-										<a href="<?php print $base_url ?>/career" class="post-gallery"></a>
+										<a href="<?php print $small_banner->field_small_banner_redirect[LANGUAGE_NONE][0]['value'] ?>" class="post-gallery"></a>
 									</div>
 								</div>
 							</div>
 						</article>
 					</div>
-					<div class="col-sm-4">
-						<article class="post post-masonry">
-							<div class="post-image">
-								<div class="image">
-									<img src="http://placehold.it/780x540" alt="">
-									<div class="image-extras">
-										<div class="image-text">
-											<h4><em>new</em> stores</h4>
-											<a class="read-more" href="#">check out</a>
-										</div>
-										<a href="<?php print $base_url ?>/store-locator" class="post-gallery"></a>
-									</div>
-								</div>
-							</div>
-						</article>
-					</div>
+					<?php } ?>
+					
 					<div class="col-sm-4">
 						<div class="past-events">
 							<h2><span>Past Events</span></h2>

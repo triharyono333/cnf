@@ -1,6 +1,6 @@
 <?php
 global $base_url;
-$path_to_theme = $base_url."/sites/all/themes/race/";
+$path_to_theme = $base_url."/sites/all/themes/cnf/";
 ?>
 <!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:og="http://ogp.me/ns#" xmlns:fb="https://www.facebook.com/2008/fbml" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -12,16 +12,14 @@ $path_to_theme = $base_url."/sites/all/themes/race/";
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>ALIADRIAN.COM</title>
-<link href="<?php print $path_to_theme; ?>site.css" rel="stylesheet" type="text/css" />
+<title>CnF Perfumery</title>
 </head>
 
 <body>
 <table border="0" align="center" cellspacing="10" padding="30">
   <tr>
     <td style="text-align:center">
-
-	COMING SOON...    
+Oops.. Something wrong happen when you access this page. Please contact administrator.   
     </td>
   </tr>
 </table>

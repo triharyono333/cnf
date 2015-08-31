@@ -3,7 +3,7 @@
 // $Id$
 global $base_url;
 define("PATH_TO_FILE", $base_url."/sites/default/files/");
-define("ITEM_PER_PAGE", 12);
+define("ITEM_PER_PAGE", 21);
 
 function cnf_custom_function_menu() {
 	$items['subscribe'] = array(
@@ -99,15 +99,20 @@ function breadcrumb() {
 			$parent = 'Corporate';
 		} else if ($arg0 == 'fragrance' || $arg0 == 'skin_care' || $arg0 == 'make_up') {
 			$arg0 = str_replace('_', ' ', $arg0);
-			$arg0 = ucwords($arg0);
-			$parent = $arg0;
+			$parent = ucwords($arg0);
 			$category = taxonomy_term_load($arg1);
 			$title = $category->name;
 		} else if ($arg0 == 'corporate') {
 			$parent = ucwords($arg0);
 			$arg1 = str_replace('_', ' ', $arg1);
-			$arg1 = ucwords($arg1);
-			$title = $arg1;
+			$title = ucwords($arg1);
+		} else if ($arg0 == 'career') {
+			$node = node_load($arg1);
+			$title = $node->title;
+			$parent = 'Career';
+		} else {
+			$parent = ucwords($arg0);
+			$title = ucwords($arg1);
 		}
 		$output .= '<li><a href="#">'.$parent.'</a></li><li class="active">'.$title.'</li>';
 	}
