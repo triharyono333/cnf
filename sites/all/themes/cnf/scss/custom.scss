@@ -391,3 +391,15 @@
 		}
 	}
 }
+
+.region {
+	&.region-content {
+		ul {
+			&.ul1 { list-style-type: circle; margin-left: 20px; margin-bottom: 15px; }
+		}
+		ol {
+			&.ol1 { list-style-type: decimal; margin-left: 20px; margin-bottom: 15px; }
+		}
+		li { font-size: 14px;line-height: 1.3em;margin-bottom: 8px; }
+	}
+}
