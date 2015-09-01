@@ -17,7 +17,7 @@
 #nav {
 	.sub-nav {
 		padding: 0;
-		li { 
+		li {
 			padding: 0;
 			a {
 				padding-left: 20px; padding-right:20px;
@@ -281,7 +281,7 @@
 			background: #fff; border: 1px solid #ccc; padding-left: 10px; padding-right: 10px;
 			&:focus { border-color: #ef262e;}
 		}
-		.form-group { 
+		.form-group {
 			&:not(.box) { margin-bottom: 0;}
 		}
 		p.help-block { margin-top: 0; font-weight: 700; color: #333;}
@@ -289,8 +289,8 @@
 	.store-list {
 		li {
 			padding: 15px 0; margin: 0; font-size: 14px; border-bottom: 3px solid #f2f2f2;
-			&.store { 
-				position: relative; 
+			&.store {
+				position: relative;
 				&:before { font-family: 'FontAwesome'; font-size: 50px;position: absolute;color: #ef232c;content: "\f041"; top: 20px; left: 5px; line-height: 50px;}
 				.title { color:#ef232c; font-weight: 700; margin: 5px 0 0;}
 				.address { font-size: 13px; }
@@ -406,9 +406,9 @@
 
 #category-menu {
 	.panel-default > {
-		.panel-heading { 
+		.panel-heading {
 			border: none; padding: 0; background: #f1f1f1; @include border-radius(0, 0, 0, 0);
-			a { 
+			a {
 				display: block; padding: 12px 20px; font-size: 14px; text-transform: uppercase; color: #EF262E;
 				&.collapsed { color: #333; }
 			}
@@ -419,13 +419,13 @@
 			&.in { border: none; }
 		}
 	}
-	.panel-body { 
+	.panel-body {
 		border: none; padding: 1px 0 0;
 		.list-menus {
-			li { 
-				margin-bottom: 1px; display: block; font-size: 14px; background: #f9f9f9; 
-				a { 
-					display: block; padding: 12px 20px; 
+			li {
+				margin-bottom: 1px; display: block; font-size: 14px; background: #f9f9f9;
+				a {
+					display: block; padding: 12px 20px;
 					&:hover { background: #EF262E; color: #fff;}
 				}
 			}

@@ -36,7 +36,7 @@ $arg0 = arg(0);
 		<div class="section">
 			<div class="container">
 				<div class="soap-gallery owl-carousel style3">
-					<?php 
+					<?php
 						$banners = node_load(7);
 						foreach($banners->field_banner_image[LANGUAGE_NONE] as $banner) {
 					?>
@@ -48,9 +48,9 @@ $arg0 = arg(0);
 		<div class="section home-featured">
 			<div class="container">
 				<div class="row">
-					<?php 
+					<?php
 					$small_banner_ids = array('121', '122');
-					$small_banners = node_load_multiple($small_banner_ids); 
+					$small_banners = node_load_multiple($small_banner_ids);
 					foreach($small_banners as $small_banner) {
 					?>
 					<div class="col-sm-4">
@@ -69,7 +69,7 @@ $arg0 = arg(0);
 						</article>
 					</div>
 					<?php } ?>
-					
+
 					<div class="col-sm-4">
 						<div class="past-events">
 							<h2><span>Past Events</span></h2>
@@ -80,7 +80,7 @@ $arg0 = arg(0);
 			</div>
 		</div>
 		<?php } else { ?>
-		
+
 		<div class="container">
 			<div class="page-title-container">
 				<ul class="breadcrumbs">
@@ -90,7 +90,7 @@ $arg0 = arg(0);
 			<div class="row">
 					<?php if ($messages): ?><div id="console" class="clearfix"><?php print $messages; ?></div><?php endif; ?>
 					<?php if ($tabs): ?><div class="tabs"><?php print render($tabs); ?></div><?php endif; ?>
-				<div class="sidebar col-md-3 col-sm-4">					
+				<div class="sidebar col-md-3 col-sm-4">
 					<?php if ($page['sidebar_first']): ?>
 							<?php print render($page['sidebar_first']); ?>
 					<?php endif; ?>
@@ -139,7 +139,7 @@ $arg0 = arg(0);
 				</div>
 			</div>
 		</div>
-		
+
 		<?php } ?>
 	</section>
 
