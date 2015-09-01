@@ -52,8 +52,10 @@
         background: #ef262e;
         color: #fff; }
 
-.home-banners article.post {
+.owl-carousel.home-banners article.post {
   border: 3px solid #e6e6e6; }
+.owl-carousel.home-banners .owl-wrapper-outer {
+  border: 1px solid #e7e7e7; }
 
 .home-featured .image .image-extras {
   background: rgba(104, 104, 104, 0.7);

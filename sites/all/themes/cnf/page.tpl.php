@@ -35,7 +35,7 @@ $arg0 = arg(0);
 		<?php if (drupal_is_front_page()) { ?>
 		<div class="section">
 			<div class="container">
-				<div class="soap-gallery owl-carousel style3">
+				<div class="soap-gallery owl-carousel style3 home-banners">
 					<?php
 						$banners = node_load(7);
 						foreach($banners->field_banner_image[LANGUAGE_NONE] as $banner) {
