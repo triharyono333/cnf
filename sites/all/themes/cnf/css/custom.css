@@ -599,4 +599,37 @@
   line-height: 1.3em;
   margin-bottom: 8px; }
 
+#category-menu .panel-default > .panel-heading {
+  border: none;
+  padding: 0;
+  background: #f1f1f1;
+  -webkit-border-radius: 0 0 0 0;
+  -moz-border-radius: 0 0 0 0;
+  -ms-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0; }
+  #category-menu .panel-default > .panel-heading a {
+    display: block;
+    padding: 12px 20px;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #EF262E; }
+    #category-menu .panel-default > .panel-heading a.collapsed {
+      color: #333; }
+#category-menu .panel-collapse .collapse.in {
+  border: none; }
+#category-menu .panel-body {
+  border: none;
+  padding: 1px 0 0; }
+  #category-menu .panel-body .list-menus li {
+    margin-bottom: 1px;
+    display: block;
+    font-size: 14px;
+    background: #f9f9f9; }
+    #category-menu .panel-body .list-menus li a {
+      display: block;
+      padding: 12px 20px; }
+      #category-menu .panel-body .list-menus li a:hover {
+        background: #EF262E;
+        color: #fff; }
+
 /*# sourceMappingURL=custom.css.map */

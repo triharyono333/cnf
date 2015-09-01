@@ -403,3 +403,32 @@
 		li { font-size: 14px;line-height: 1.3em;margin-bottom: 8px; }
 	}
 }
+
+#category-menu {
+	.panel-default > {
+		.panel-heading { 
+			border: none; padding: 0; background: #f1f1f1; @include border-radius(0, 0, 0, 0);
+			a { 
+				display: block; padding: 12px 20px; font-size: 14px; text-transform: uppercase; color: #EF262E;
+				&.collapsed { color: #333; }
+			}
+		}
+	}
+	.panel-collapse {
+		.collapse {
+			&.in { border: none; }
+		}
+	}
+	.panel-body { 
+		border: none; padding: 1px 0 0;
+		.list-menus {
+			li { 
+				margin-bottom: 1px; display: block; font-size: 14px; background: #f9f9f9; 
+				a { 
+					display: block; padding: 12px 20px; 
+					&:hover { background: #EF262E; color: #fff;}
+				}
+			}
+		}
+	}
+}
