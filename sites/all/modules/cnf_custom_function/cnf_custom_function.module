@@ -138,7 +138,7 @@ function top_menu() {
 		$submenu = '';
 		if (strtolower($menu['link_title'])=='corporate' || strtolower($menu['link_title'])=='fragrance'
 		|| strtolower($menu['link_title'])=='skin care' || strtolower($menu['link_title'])=='make up'
-		|| strtolower($menu['link_path'])=='news_event') {
+		|| strtolower($menu['link_path'])=='event_promo') {
 			if (strtolower($menu['link_title'])=='corporate') {
 				$submenu = '<ul class="sub-nav">';
 				$query = "SELECT nid, title FROM node WHERE type='corporate'";
@@ -154,7 +154,7 @@ function top_menu() {
 				$submenu = _generate_product_submenu('skin_care');
 			} else if (strtolower($menu['link_title'])=='make up') {
 				$submenu = _generate_product_submenu('make_up');
-			}	else if (strtolower($menu['link_path'])=='news_event') {
+			}	else if (strtolower($menu['link_path'])=='event_promo') {
 				$submenu = '<ul class="sub-nav"><li><a href="'.$base_url.'/press_coverage" title="Press Coverage">Press Coverage</a></li></ul>';
 			}
 			

@@ -52,6 +52,11 @@ function cnf_product_theme($existing, $type, $theme, $path) {
         'variables' => array('content' => NULL),
         'template' => 'cnf_product', // place you file in 'theme' folder of you module folder
         'path' => drupal_get_path('module', 'cnf_product')
+      ),
+			'cnf_subcategory' => array(
+        'variables' => array('content' => NULL),
+        'template' => 'cnf_subcategory', // place you file in 'theme' folder of you module folder
+        'path' => drupal_get_path('module', 'cnf_product')
       )
     );
 }
@@ -114,18 +119,23 @@ function _cnf_product_block($product_type){
 	if (empty($tid)) $tid = _get_default_category($product_type);
 	
 	if ($url == $product_type) {
-		$categories = get_product_category($product_type);
-		$output = '<ul class="sidebar-menu">';
-		foreach($categories as $category) {
-			$active = '';
-			$category_tid = $category->tid;
-			$category_name = $category->name;
-			if ($tid == $category_tid) $active = 'class="active"';
-				$output .= '<li '.$active.'><a title="'.$category_name.'" href="'.$base_url.'/'.$url.'/'.$category_tid.'">'.$category_name.'</a></li>';
+		if ($product_type == 'fragrance') {
+			$categories = get_product_category($product_type);
+			$output = '<ul class="sidebar-menu">';
+			foreach($categories as $category) {
+				$active = '';
+				$category_tid = $category->tid;
+				$category_name = $category->name;
+				if ($tid == $category_tid) $active = 'class="active"';
+					$output .= '<li '.$active.'><a title="'.$category_name.'" href="'.$base_url.'/'.$url.'/'.$category_tid.'">'.$category_name.'</a></li>';
+			}
+			$output .= '</ul>';
+			//print "<pre>".print_r($category_name, true)."</pre>";
+			return $output;
+		} else { // make up and skin care	
+			$content = 'test';
+			return theme('cnf_subcategory', array('content' => $content));
 		}
-		$output .= '</ul>';
-		//print "<pre>".print_r($category_name, true)."</pre>";
-		return $output;
 	}
 }
 
@@ -133,6 +143,7 @@ function _cnf_product_block($product_type){
 function _cnf_product_brand_block($product_type){
 	global $base_url;
 	$brand_char = array();
+	$b = $_GET['b'];
 	$url = arg(0);
 	$tid = arg(1);
 	if (empty($tid)) $tid = _get_default_category($product_type);
@@ -148,7 +159,9 @@ function _cnf_product_brand_block($product_type){
 		
 		$output = '<h4>Brands - A to Z</h4><ul class="sidebar-menu indexing">';
 		foreach($brand_char as $char) {
-			$output .= '<li><a href="'.$base_url.'/fragrance/'.$tid.'?b='.$char.'" title="'.strtoupper($char).'">'.strtoupper($char).'</a></li>';
+			if (isset($b) && strtoupper($b) == strtoupper($char)) $class = 'class="brand-active"';
+			else $class = '';
+			$output .= '<li '.$class.'><a href="'.$base_url.'/fragrance/'.$tid.'?b='.$char.'" title="'.strtoupper($char).'">'.strtoupper($char).'</a></li>';
 		}
 		$brand_char = array_unique($brand_char);
 		$output .= '</ul>';

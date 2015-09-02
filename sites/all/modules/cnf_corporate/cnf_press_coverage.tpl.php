@@ -24,6 +24,10 @@
 						</div>
 						<div class="modal-body">
 							<div class="soap-gallery owl-carousel style3 owl-theme">
+								<?php 
+								array_multisort($press->field_press_coverage_image[LANGUAGE_NONE],SORT_ASC, SORT_STRING); 
+								//drupal_set_message("<pre>".print_r($press->field_press_coverage_image[LANGUAGE_NONE], true)."</pre>");
+								?>
 								<?php foreach($press->field_press_coverage_image[LANGUAGE_NONE] as $image) { ?>
 								<img src="<?php print file_create_url($image['uri']) ?>" alt="">
 								<?php } ?>

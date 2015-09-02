@@ -4,10 +4,10 @@
 
 function cnf_event_menu() {
     
-	$items['news_event'] = array(
+	$items['event_promo'] = array(
 		'title' => t('News Event'),
 		'description' => 'News Event',
-		'page callback' => 'news_event',
+		'page callback' => 'event_promo',
 		'access arguments' => true,
 		'access callback' => true,
 		'type' =>  MENU_CALLBACK,
@@ -15,7 +15,7 @@ function cnf_event_menu() {
 	return $items;
 }
 
-function news_event() {
+function event_promo() {
 	global $base_url;
 	$page = $_GET['page'];
 	$archive_month = arg(1);
@@ -82,7 +82,7 @@ function _news_archive(){
 		$arg0 = arg(0);
 		//$arg1 = arg(1);
 		//if ($arg0 == 'node' && isset($arg1)) {
-		if ($arg0 == 'news_event') {
+		if ($arg0 == 'event_promo') {
 			$archive_month = arg(1);
 			$archive_year = arg(2);
 
@@ -106,7 +106,7 @@ function _news_archive(){
 				if ($archive_month == $archive->month && $archive_year == $archive->year) $active = 'class="active"';
 				else $active = '';
 				$output .= '<li '.$active.'>'
-					. '<a href="'.$base_url.'/news_event/'.$archive->month.'/'.$archive->year.'">'.date("F",mktime(0,0,0,$archive->month,1,$archive->year)).' '.$archive->year.'</a></li>';
+					. '<a href="'.$base_url.'/event_promo/'.$archive->month.'/'.$archive->year.'">'.date("F",mktime(0,0,0,$archive->month,1,$archive->year)).' '.$archive->year.'</a></li>';
 			}
 			$output .= '</ul>';
 
@@ -121,7 +121,7 @@ function _get_last_event($number=5) {
 	$result = db_query($query);
 	foreach ($result as $news) {
 		//$alias = drupal_lookup_path('alias',"node/".$news->nid);
-		$output .= '<li><a href="'.$base_url.'/news_event">'.$news->title.'</a></li>';
+		$output .= '<li><a href="'.$base_url.'/event_promo">'.$news->title.'</a></li>';
 	}	
 	$output .= '</ul>';
 	
