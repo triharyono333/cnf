@@ -216,6 +216,9 @@
     margin-right: 2px; }
     .sidebar .sidebar-menu.indexing li a {
       padding: 12px 0; }
+    .sidebar .sidebar-menu.indexing li.brand-active {
+      background: #ef262e;
+      color: #fff; }
 .sidebar ul.archives {
   margin-top: 10px; }
   .sidebar ul.archives li {
