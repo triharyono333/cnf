@@ -150,6 +150,7 @@ $arg0 = arg(0);
 							<li><a href="<?php print variable_get('facebook') ?>" target="_blank" title="C & F Perfumery"><i class="fa fa-facebook"></i> <span>/CF-Perfumery</span></a></li>
 							<li><a href="<?php print variable_get('twitter') ?>" target="_blank" title="C & F Perfumery"><i class="fa fa-twitter"></i> <span>@cnf_perfumery</span></a></li>
 							<li><a href="<?php print variable_get('instagram') ?>" target="_blank" title="C & F Perfumery"><i class="fa fa-instagram"></i> <span>@cnf_perfumery</span></a></li>
+							<li><a href="<?php print variable_get('youtube') ?>" target="_blank" title="C & F Perfumery"><i class="fa fa-youtube"></i> <span>C&amp;F Perfumery</span></a></li>
 						</ul>
 					</div>
 				</div>
