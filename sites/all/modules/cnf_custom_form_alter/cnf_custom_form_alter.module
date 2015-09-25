@@ -5,6 +5,12 @@ function cnf_custom_form_alter_form_alter(&$form, &$form_state, $form_id) {
 	//print "<pre>".print_r($form, true)."</pre>";
 	//print $form_id;
 	global $user;
+	if (isset($items['user/%user'])) {
+    array_unshift($items['user/%user']['access arguments'], $items['user/%user']['access callback']);
+    array_unshift($items['user/%user']['access arguments'], 1);
+    $items['user/%user']['access callback'] = 'cnf_custom_form_alter_user_view_access';
+  }
+	
 	if ($user->uid != 1) {
 		$style = "<style>
 								.vertical-tabs  { display:none; }
@@ -101,5 +107,30 @@ function simplenews_node_form_submit_handler($form, &$form_state) {
     $form_state['redirect']  = 'admin/content/simplenews';   
 }
 
+function mymodule_menu_alter(&$items) {
+  if (isset($items['user/%user'])) {
+    array_unshift($items['user/%user']['access arguments'], $items['user/%user']['access callback']);
+    array_unshift($items['user/%user']['access arguments'], 1);
+    $items['user/%user']['access callback'] = 'mymodule_user_view_access';
+  }
+}
+
+function cnf_custom_form_alter_user_view_access($account, $callback) {
+  $args = func_get_args();
+  // Remove $account and $callback from the arguments.
+  unset($args[0], $args[1]);
+
+  $uid = is_object($account) ? $account->uid : (int) $account;
+
+  // 1
+  if ($uid == 1) {
+    // The user ID is 1; only that user can view that user account.
+    return ($GLOBALS['user']->uid == 1);
+  } 
+  // 1
+
+  // Let the previously set access callback decide who has access to the user account.
+  return call_user_func_array($callback, $args);    
+}
 
 ?>

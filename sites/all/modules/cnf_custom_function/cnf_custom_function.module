@@ -62,8 +62,9 @@ function get_product_brand ($vocabulary) {
 }
 
 function get_product_category ($vocabulary) {
-	$vacabulary = taxonomy_vocabulary_machine_name_load($vocabulary.'_category');
-	$tree = taxonomy_get_tree($vacabulary->vid);
+	if ($vocabulary == 'fragrance') $vocabulary = taxonomy_vocabulary_machine_name_load($vocabulary.'_category');
+	else $vocabulary = taxonomy_vocabulary_machine_name_load($vocabulary.'_brand');
+	$tree = taxonomy_get_tree($vocabulary->vid);
 	return $tree;
 }
 
@@ -179,7 +180,10 @@ function _generate_product_submenu($product_type) {
 	$submenu = '<ul class="sub-nav">';
 	$categories = get_product_category($product_type);
 	foreach($categories as $category) {
-		$submenu .=	'<li><a href="'.$base_url.'/'.$product_type.'/'.$category->tid.'" title="'.$category->tid.'">'.$category->name.'</a></li>';
+		if ($product_type == 'fragrance')
+			$submenu .=	'<li><a href="'.$base_url.'/'.$product_type.'/'.$category->tid.'" title="'.$category->tid.'">'.$category->name.'</a></li>';
+		else
+			$submenu .=	'<li><a href="'.$base_url.'/'.$product_type.'?p='.$category->tid.'" title="'.$category->tid.'">'.$category->name.'</a></li>';
 	}
 	$submenu .= '</ul>';
 	

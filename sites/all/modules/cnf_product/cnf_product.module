@@ -114,9 +114,13 @@ function fragrance_brand_block() {
 
 function _cnf_product_block($product_type){
 	global $base_url;
+	$parent_brand = '';
 	$url = arg(0);
 	$tid = arg(1);
-	if (empty($tid)) $tid = _get_default_category($product_type);
+	//if ($product_type != 'fragrance' && empty($_GET['b'])) $parent = _get_default_parent_category($product_type);
+	if ($product_type != 'fragrance' && empty($_GET['p'])) $parent_brand = _get_default_brand($product_type);
+	else $parent_brand = $_GET['p'];
+	if (empty($tid)) $tid = _get_default_category($product_type, $parent_brand);
 	
 	if ($url == $product_type) {
 		if ($product_type == 'fragrance') {
@@ -133,7 +137,23 @@ function _cnf_product_block($product_type){
 			//print "<pre>".print_r($category_name, true)."</pre>";
 			return $output;
 		} else { // make up and skin care	
-			$content = 'test';
+			$list = array();
+			$brand = taxonomy_vocabulary_machine_name_load($product_type.'_brand');
+			$tree = taxonomy_get_tree($brand->vid);
+			foreach ($tree as $term) {		
+				$subcategory = array();
+				$query = "SELECT a.tid, a.name FROM taxonomy_term_data a
+						JOIN field_data_field_".$product_type."_brand b ON a.tid=b.entity_id
+						WHERE b.bundle='".$product_type."_parent_category' AND b.field_".$product_type."_brand_tid=:tid";
+				$result = db_query($query, array('tid'=>$term->tid));
+				foreach ($result as $row) {
+					$subcategory[] = array('tid' => $row->tid, 'name' => $row->name);
+				}
+				$list[] = array('parent' => array('tid'=>$term->tid, 'name'=>$term->name), 'subcategory' => $subcategory);
+			}
+			$content = array('default_tid' => $tid, 'parent_brand'=>$parent_brand, 'product_type'=>$product_type, 'list'=>$list);
+			//drupal_set_message("<pre>".print_r($content, true)."</pre>");
+			
 			return theme('cnf_subcategory', array('content' => $content));
 		}
 	}
@@ -186,12 +206,16 @@ function fragrance() {
 }
 
 function _cnf_product_page($product_type){
+	$parent = '';
 	$page = $_GET['page'];
 	$start = $_GET['page'] * ITEM_PER_PAGE;
 	$category_tid = arg(1);
-	if (empty($category_tid)) $category_tid = _get_default_category($product_type);
+	//if ($product_type != 'fragrance' && empty($_GET['p'])) $parent = _get_default_parent_category($product_type);
+	if ($product_type != 'fragrance' && empty($_GET['p'])) $parent = _get_default_brand($product_type);
+	else $parent = $_GET['p'];
+	if (empty($category_tid)) $category_tid = _get_default_category($product_type, $parent);
 	
-	if (isset($category_tid)) {
+	if (!empty($category_tid)) {
 		$category = taxonomy_term_load($category_tid);
 		$content['category_description'] = $category->description;
 		$content['product_type'] = $product_type;
@@ -208,9 +232,7 @@ function _cnf_product_page($product_type){
 				$count = $count + 1;
 			}
 			if (isset($brand_or)) $where = ' AND ('.$brand_or.')';
-			$query_total = "SELECT COUNT(product_id) FROM commerce_product a, field_data_field_".$product_type."_category b, field_data_field_".$product_type."_brand c WHERE a.product_id = b.entity_id AND a.product_id = c.entity_id ".$where." AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."'";
-			$query = "SELECT product_id, a.title FROM commerce_product a, field_data_field_".$product_type."_category b, field_data_field_".$product_type."_brand c WHERE a.product_id = b.entity_id AND a.product_id = c.entity_id ".$where." AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."' ORDER BY a.title ASC";	
-				
+			$query = "SELECT product_id, a.title FROM commerce_product a, field_data_field_".$product_type."_category b, field_data_field_".$product_type."_brand c WHERE a.product_id = b.entity_id AND a.product_id = c.entity_id ".$where." AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."' ORDER BY a.title ASC";				
 		} else {
 			if ($product_type == 'fragrance') {
 				$query = "SELECT product_id, a.title "
@@ -222,29 +244,26 @@ function _cnf_product_page($product_type){
 						. "d.machine_name = '".$product_type."_brand' AND "
 						. "field_".$product_type."_category_tid=".$category_tid." AND "
 						. "a.type='".$product_type."' AND b.bundle='".$product_type."' "
-						. "ORDER BY e.name ASC, a.title ASC";	
-				$query_total = "SELECT COUNT(product_id) "
-						. "FROM commerce_product a, field_data_field_".$product_type."_category b, field_data_field_".$product_type."_brand c, taxonomy_vocabulary d, taxonomy_term_data e "
-						. "WHERE a.product_id = b.entity_id AND a.status=1 AND "
-						. "a.product_id = c.entity_id AND "
-						. "c.field_".$product_type."_brand_value = e.tid AND "
-						. "d.vid = e.vid AND "
-						. "d.machine_name = '".$product_type."_brand' AND "
-						. "field_".$product_type."_category_tid=".$category_tid." AND "
-						. "a.type='".$product_type."' AND b.bundle='".$product_type."' "
-						. "ORDER BY e.name ASC, a.title ASC";	
-				//$query_total = "SELECT COUNT(product_id) FROM commerce_product a, field_data_field_".$product_type."_category b WHERE a.product_id = b.entity_id AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."'";
+						. "ORDER BY e.name ASC, a.title ASC";
 			} else {
-				$query = "SELECT product_id, a.title "
-						. "FROM commerce_product a, field_data_field_".$product_type."_category b, taxonomy_vocabulary d, taxonomy_term_data e "
+				/*$query = "SELECT product_id, a.title "
+						. "FROM commerce_product a, field_data_field_".$product_type."_category b, taxonomy_vocabulary d, taxonomy_term_data e, field_data_field_".$product_type."_parent_category f "
 						. "WHERE a.product_id = b.entity_id AND a.status=1 AND "
-						. "b.field_".$product_type."_category_tid = e.tid AND "
+						. "b.field_".$product_type."_category_value = e.tid AND "
 						. "d.vid = e.vid AND "
-						. "field_".$product_type."_category_tid=".$category_tid." AND "
+						//. "b.vid = e.vid AND "
+						. "f.field_".$product_type."_parent_category_tid = e.tid AND "
+						//. "field_".$product_type."_category_value=".$category_tid." AND "
+						. "field_".$product_type."_parent_category_tid=".$category_tid." AND "
 						. "a.type='".$product_type."' AND b.bundle='".$product_type."' "
-						. "ORDER BY e.name ASC, a.title ASC";			
-				$query_total = "SELECT COUNT(product_id) FROM commerce_product a, field_data_field_".$product_type."_category b WHERE a.product_id = b.entity_id AND a.status=1 AND field_".$product_type."_category_tid=".$category_tid." AND a.type='".$product_type."' AND b.bundle='".$product_type."'";
-			}
+						. "ORDER BY e.name ASC, a.title ASC";	*/
+				$query = "SELECT commerce_product.product_id AS product_id, commerce_product.sku AS commerce_product_sku, commerce_product.title AS commerce_product_title, commerce_product.type AS commerce_product_type, commerce_product.uid AS commerce_product_uid, commerce_product.product_id AS commerce_product_product_id, 'commerce_product' AS field_data_field_make_up_category_commerce_product_entity_ty
+							FROM 
+							commerce_product commerce_product
+							JOIN field_data_field_".$product_type."_category b ON commerce_product.product_id = b.entity_id
+							WHERE b.field_".$product_type."_category_value = '".$category_tid."' AND (( (commerce_product.type IN  ('".$product_type."')) ))
+							ORDER BY commerce_product_product_id ASC";
+				}
 		}
 		//drupal_set_message($query);
 		// query - end
@@ -263,7 +282,8 @@ function _cnf_product_page($product_type){
 		}
 		
 		// paging
-		$total = db_query($query_total)->fetchField();
+		//$total = db_query($query_total)->fetchField();
+		$total = db_query($query)->rowCount();
 		pager_default_initialize($total,ITEM_PER_PAGE);
 
 		// listing
@@ -285,8 +305,8 @@ function product_import_form($form, &$form_state){
 		'#title' => t('Product Type'),
 		'#required' => true,
 		'#description' => t('Product Type'),
-		//'#options' => array('fragrance'=>'Fragrance', 'skin_care'=>'Skin Care', 'make_up'=>'Make Up')
-		'#options' => array('fragrance'=>'Fragrance')
+		'#options' => array('fragrance'=>'Fragrance', 'skin_care'=>'Skin Care', 'make_up'=>'Make Up')
+		//'#options' => array('fragrance'=>'Fragrance')
 	);
 
 	$form['#attributes']['enctype'] = "multipart/form-data";
@@ -338,113 +358,9 @@ function product_import($filename, $fid, $product_type) {
   $result = phpexcel_import($path);
   
   if (is_array($result)) {
-		foreach($result as $products) {
-			foreach($products as $product) {
-				$brand = $product['BRAND'];
-				$category = $product['GENDER'];
-				$title = $product['PRODUCT'];
-				$sku = $product['SKU'];
-				$price = $product['PRICE'];
-				$info = nl2br($product['Info Product ( notes,  brand dari mana, perfumist )']);
-				//$info = $product['DESCRIPTION'];
-				$type = $product['Product Category'];
-				$size = $product['Size'];
-				$price = $product['SELLING PRICE'];
-				$rsp = $product['RSP'];
-				
-				$vocab_category = $product_type.'_category';
-				$vocab_category_load = taxonomy_vocabulary_machine_name_load($vocab_category);
-				$vocab_brand = $product_type.'_brand';
-				$vocab_brand_load = taxonomy_vocabulary_machine_name_load($vocab_brand);
-				
-				// get category tid
-				$query = "SELECT tid FROM taxonomy_term_data WHERE vid=:vid AND name=:category LIMIT 1";
-				$taxo_category = db_query($query, array(':vid'=>$vocab_category_load->vid, 'category'=>$category))->fetchField();
-				//$taxo_category = taxonomy_get_term_by_name($category, $vocab_category);
-				//$taxo_brand = taxonomy_get_term_by_name($brand, $vocab_brand);
-				$check_sku = commerce_product_load_by_sku($sku);
-
-				if (!empty($check_sku)) { // check sku
-					drupal_set_message('SKU '.$sku.' sudah ada', 'error');
-					//drupal_set_message("<pre>".print_r($check_sku, true)."</pre>");
-				} else { // insert product
-					// CATEGORY / GENDER
-					if (empty($taxo_category)) { // check category {
-						// insert new gender/category
-						$term1 = (object) array(
-							'name' => $category,
-							'vid' => $vocab_category_load->vid,
-						);
-						taxonomy_term_save($term1);
-						$taxo_category = $term1->tid;
-					}
-					
-					// BRAND
-					$query = "SELECT a.tid FROM taxonomy_term_data a JOIN field_data_field_fragrance_category b ON a.tid=b.entity_id 
-										WHERE b.bundle=:vocab AND a.vid=:vid AND 
-										name=:brand AND b.field_fragrance_category_tid=:tid LIMIT 1";
-					$taxo_brand = db_query($query, array('vocab'=>$vocab_brand, 'vid'=>$vocab_brand_load->vid, 'brand'=>$brand, 'tid'=>$taxo_category))->fetchField();
-					if (empty($taxo_brand)) { // check brand {
-						// insert new brand
-						$term2 = new stdClass();
-						$term2->name = $brand;
-						$term2->vid = $vocab_brand_load->vid;
-						$term2->field_fragrance_category[LANGUAGE_NONE][0]['tid'] = $taxo_category;
-						taxonomy_term_save($term2);
-						$taxo_brand = $term2->tid;
-					}
-					
-					// Product
-					$product = commerce_product_new($product_type);
-					$product->sku = $sku;
-					$product->title = $title;
-					$product->language = LANGUAGE_NONE;
-					$product->uid = 1;
-					$product->commerce_price[LANGUAGE_NONE][0] = array(
-						'amount' => $price,
-						'currency_code' => "IDR",
-					);
-					$product->field_fragrance_rsp[LANGUAGE_NONE][0] = array(
-						'amount' => $rsp,
-						'currency_code' => "IDR",
-					);
-					if ($product_type == 'fragrance') {
-						$product->field_fragrance_brand[LANGUAGE_NONE][0]['value'] = $taxo_brand;
-						$product->field_fragrance_category[LANGUAGE_NONE][0]['tid'] = $taxo_category;
-						$product->field_fragrance_description[LANGUAGE_NONE][0]['value'] = $info;
-						$product->field_fragrance_type[LANGUAGE_NONE][0]['value'] = $type;
-						$product->field_fragrance_size[LANGUAGE_NONE][0]['value'] = $size;
-					} else if ($product_type == 'skin_care') {
-						$product->field_skin_care_brand[LANGUAGE_NONE][0]['tid'] = $taxo_brand;
-						$product->field_skin_care_category[LANGUAGE_NONE][0]['tid'] = $taxo_category;
-						$product->field_skin_care_description[LANGUAGE_NONE][0]['value'] = $info;
-					} else if ($product_type == 'make_up') {
-						$product->field_make_up_brand[LANGUAGE_NONE][0]['tid'] = $taxo_brand;
-						$product->field_make_up_category[LANGUAGE_NONE][0]['tid'] = $taxo_category;
-						$product->field_make_up_description[LANGUAGE_NONE][0]['value'] = $info;
-					}
-					commerce_product_save($product);
-
-					// Product display
-					$node = (object)array('type' => $product_type.'_product');
-					node_object_prepare($node);
-					$node->title = $title;
-					$node->uid = 1;
-					if ($product_type == 'fragrance') {
-						$node->field_fragrance_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
-					} else if ($product_type == 'skin_care') {
-						$node->field_skin_care_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
-					} else if ($product_type == 'make_up') {
-						$node->field_make_up_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
-					}
-					$node->language = LANGUAGE_NONE;
-					node_save($node);
-					drupal_set_message('SKU '.$sku.' berhasil ditambahkan', 'notice');
-					//drupal_set_message("<pre>".print_r($product, true)."</pre>");
-					//drupal_set_message("<pre>".print_r($node, true)."</pre>");
-				}
-			}
-		}
+		if ($product_type == 'fragrance') _fragrance_import_product($filename, $fid, $product_type, $result);
+		else _other_import_product($filename, $fid, $product_type, $result);
+		
 		// delete the file after all done
 		$file = file_load($fid);
 		file_delete($file);
@@ -456,8 +372,28 @@ function product_import($filename, $fid, $product_type) {
 	//return $output;
 }
 
-function _get_default_category($product_type){
-	$query = "SELECT b.tid FROM taxonomy_vocabulary a, taxonomy_term_data b WHERE a.vid=b.vid AND a.machine_name = '".$product_type."_category' LIMIT 1";
+function _get_default_category($product_type, $parent=''){
+	if ($product_type == 'fragrance') {
+		$query = "SELECT b.tid FROM taxonomy_vocabulary a, taxonomy_term_data b WHERE a.vid=b.vid AND a.machine_name = '".$product_type."_category' LIMIT 1";
+	} else {
+		if (!empty($parent)) {
+		$query = "SELECT b.tid FROM taxonomy_vocabulary a, taxonomy_term_data b, field_data_field_".$product_type."_brand c "
+			. "WHERE a.vid=b.vid AND b.tid = c.entity_id AND field_".$product_type."_brand_tid = ".$parent
+			. " AND a.machine_name = '".$product_type."_parent_category' LIMIT 1";
+		}
+	}
+	if (!empty($query)) $tid = db_query($query)->fetchField();
+	return $tid;
+}
+
+function _get_default_parent_category($product_type){
+	$query = "SELECT field_".$product_type."_parent_category_tid FROM field_data_field_".$product_type."_parent_category WHERE bundle='".$product_type."_category' LIMIT 1";
+	$tid = db_query($query)->fetchField();
+	return $tid;
+}
+
+function _get_default_brand($product_type){
+	$query = "SELECT field_".$product_type."_brand_tid FROM field_data_field_".$product_type."_brand WHERE bundle='".$product_type."_parent_category' LIMIT 1";
 	$tid = db_query($query)->fetchField();
 	return $tid;
 }
@@ -470,17 +406,232 @@ function _get_brand_name($tid) {
 	}
 }
 
+function _fragrance_import_product($filename, $fid, $product_type, $result) {
+	foreach($result as $products) {
+		foreach($products as $product) {
+			$brand = $product['BRAND'];
+			$category = $product['GENDER'];
+			$title = $product['PRODUCT'];
+			$sku = $product['SKU'];
+			$info = nl2br($product['Info Product ( notes,  brand dari mana, perfumist )']);
+			//$info = $product['DESCRIPTION'];
+			$type = $product['Product Category'];
+			$size = $product['Size'];
+			$price = $product['SELLING PRICE'];
+			$rsp = $product['RSP'];
+
+			$vocab_category = $product_type.'_category';
+			$vocab_category_load = taxonomy_vocabulary_machine_name_load($vocab_category);
+			$vocab_brand = $product_type.'_brand';
+			$vocab_brand_load = taxonomy_vocabulary_machine_name_load($vocab_brand);
+
+			// get category tid
+			$query = "SELECT tid FROM taxonomy_term_data WHERE vid=:vid AND name=:category LIMIT 1";
+			$taxo_category = db_query($query, array(':vid'=>$vocab_category_load->vid, 'category'=>$category))->fetchField();
+			//$taxo_category = taxonomy_get_term_by_name($category, $vocab_category);
+			//$taxo_brand = taxonomy_get_term_by_name($brand, $vocab_brand);
+			$check_sku = commerce_product_load_by_sku($sku);
+
+			if (!empty($check_sku)) { // check sku
+				drupal_set_message('SKU '.$sku.' sudah ada', 'error');
+				//drupal_set_message("<pre>".print_r($check_sku, true)."</pre>");
+			} else { // insert product
+				// CATEGORY / GENDER
+				if (empty($taxo_category)) { // check category {
+					// insert new gender/category
+					$term1 = (object) array(
+						'name' => $category,
+						'vid' => $vocab_category_load->vid,
+					);
+					taxonomy_term_save($term1);
+					$taxo_category = $term1->tid;
+				}
+
+				// BRAND
+				$query = "SELECT a.tid FROM taxonomy_term_data a JOIN field_data_field_fragrance_category b ON a.tid=b.entity_id 
+									WHERE b.bundle=:vocab AND a.vid=:vid AND 
+									name=:brand AND b.field_fragrance_category_tid=:tid LIMIT 1";
+				$taxo_brand = db_query($query, array('vocab'=>$vocab_brand, 'vid'=>$vocab_brand_load->vid, 'brand'=>$brand, 'tid'=>$taxo_category))->fetchField();
+				if (empty($taxo_brand)) { // check brand {
+					// insert new brand
+					$term2 = new stdClass();
+					$term2->name = $brand;
+					$term2->vid = $vocab_brand_load->vid;
+					$term2->field_fragrance_category[LANGUAGE_NONE][0]['tid'] = $taxo_category;
+					taxonomy_term_save($term2);
+					$taxo_brand = $term2->tid;
+				}
+
+				// Product
+				$product = commerce_product_new($product_type);
+				$product->sku = $sku;
+				$product->title = $title;
+				$product->language = LANGUAGE_NONE;
+				$product->uid = 1;
+				$product->commerce_price[LANGUAGE_NONE][0] = array(
+					'amount' => $price,
+					'currency_code' => "IDR",
+				);
+				$product->field_fragrance_rsp[LANGUAGE_NONE][0] = array(
+					'amount' => $rsp,
+					'currency_code' => "IDR",
+				);
+				if ($product_type == 'fragrance') {
+					$product->field_fragrance_brand[LANGUAGE_NONE][0]['value'] = $taxo_brand;
+					$product->field_fragrance_category[LANGUAGE_NONE][0]['tid'] = $taxo_category;
+					$product->field_fragrance_description[LANGUAGE_NONE][0]['value'] = $info;
+					$product->field_fragrance_type[LANGUAGE_NONE][0]['value'] = $type;
+					$product->field_fragrance_size[LANGUAGE_NONE][0]['value'] = $size;
+				} else if ($product_type == 'skin_care') {
+					$product->field_skin_care_brand[LANGUAGE_NONE][0]['tid'] = $taxo_brand;
+					$product->field_skin_care_category[LANGUAGE_NONE][0]['tid'] = $taxo_category;
+					$product->field_skin_care_description[LANGUAGE_NONE][0]['value'] = $info;
+				} else if ($product_type == 'make_up') {
+					$product->field_make_up_brand[LANGUAGE_NONE][0]['tid'] = $taxo_brand;
+					$product->field_make_up_category[LANGUAGE_NONE][0]['tid'] = $taxo_category;
+					$product->field_make_up_description[LANGUAGE_NONE][0]['value'] = $info;
+				}
+				commerce_product_save($product);
+
+				// Product display
+				$node = (object)array('type' => $product_type.'_product');
+				node_object_prepare($node);
+				$node->title = $title;
+				$node->uid = 1;
+				if ($product_type == 'fragrance') {
+					$node->field_fragrance_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
+				} else if ($product_type == 'skin_care') {
+					$node->field_skin_care_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
+				} else if ($product_type == 'make_up') {
+					$node->field_make_up_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
+				}
+				$node->language = LANGUAGE_NONE;
+				node_save($node);
+				drupal_set_message('SKU '.$sku.' berhasil ditambahkan', 'notice');
+				//drupal_set_message("<pre>".print_r($product, true)."</pre>");
+				//drupal_set_message("<pre>".print_r($node, true)."</pre>");
+			}
+		}
+	}	
+}
+
+function _other_import_product($filename, $fid, $product_type, $result) {
+	foreach($result as $products) {
+		foreach($products as $product) {
+			$brand = $product['BRAND'];
+			$category = $product['MAIN CATEGORY'];
+			$title = $product['PRODUCT'];
+			$sku = $product['SKU'];
+			$info = nl2br($product['DESCRIPTION']);
+			$type = $product['PRODUCT CATEGORY'];
+			$size = $product['SIZE'];
+			$rsp = $product['RSP'];
+			$price = $product['HARGA JUAL NASIONAL'];
+
+			$vocab_brand = $product_type.'_brand';
+			$vocab_brand_load = taxonomy_vocabulary_machine_name_load($vocab_brand);
+			$vocab_category = $product_type.'_parent_category';
+			$vocab_category_load = taxonomy_vocabulary_machine_name_load($vocab_category);
+
+			// get category tid
+			$query = "SELECT tid FROM taxonomy_term_data WHERE vid=:vid AND name=:brand LIMIT 1";
+			$taxo_brand = db_query($query, array(':vid'=>$vocab_brand_load->vid, 'brand'=>$brand))->fetchField();
+			$check_sku = commerce_product_load_by_sku($sku);
+
+			if (!empty($check_sku)) { // check sku
+				drupal_set_message('SKU '.$sku.' sudah ada', 'error');
+			} else { // insert product
+				// BRAND
+				if (empty($taxo_brand)) { // check brand {
+					// insert new brand
+					$term1 = (object) array(
+						'name' => $brand,
+						'vid' => $vocab_brand_load->vid,
+					);
+					taxonomy_term_save($term1);
+					$taxo_brand = $term1->tid;
+				}
+
+				// CATEGORY
+				$query = "SELECT a.tid FROM taxonomy_term_data a JOIN field_data_field_".$product_type."_brand b ON a.tid=b.entity_id 
+									WHERE b.bundle=:vocab AND a.vid=:vid AND 
+									name=:category AND b.field_".$product_type."_brand_tid=:tid LIMIT 1";
+				$taxo_category = db_query($query, array('vocab'=>$vocab_category, 'vid'=>$vocab_category_load->vid, 'category'=>$category, 'tid'=>$taxo_brand))->fetchField();
+				if (empty($taxo_category)) { // check category {
+					// insert new parent category
+					$term2 = new stdClass();
+					$term2->name = $category;
+					$term2->vid = $vocab_category_load->vid;
+					if ($product_type == 'make_up') $term2->field_make_up_brand[LANGUAGE_NONE][0]['tid'] = $taxo_brand;
+					if ($product_type == 'skin_care') $term2->field_skin_care_brand[LANGUAGE_NONE][0]['tid'] = $taxo_brand;
+					taxonomy_term_save($term2);
+					$taxo_category = $term2->tid;
+				}
+
+				//print "<pre>".print_r($taxo_category, true)."</pre>"; exit;
+				// Product
+				$product = commerce_product_new($product_type);
+				$product->sku = $sku;
+				$product->title = $title;
+				$product->language = LANGUAGE_NONE;
+				$product->uid = 1;
+				$product->commerce_price[LANGUAGE_NONE][0] = array(
+					'amount' => $price,
+					'currency_code' => "IDR",
+				);
+				if ($product_type == 'skin_care') {
+					$product->field_skin_care_category[LANGUAGE_NONE][0]['value'] = $taxo_category;
+					$product->field_skin_care_description[LANGUAGE_NONE][0]['value'] = $info;
+					$product->field_skin_care_type[LANGUAGE_NONE][0]['value'] = $type;
+					$product->field_skin_care_size[LANGUAGE_NONE][0]['value'] = $size;
+					$product->field_skin_care_rsp[LANGUAGE_NONE][0] = array(
+						'amount' => $rsp,
+						'currency_code' => "IDR",
+					);
+				} else if ($product_type == 'make_up') {
+					$product->field_make_up_category[LANGUAGE_NONE][0]['value'] = $taxo_category;
+					$product->field_make_up_description[LANGUAGE_NONE][0]['value'] = $info;
+					$product->field_make_up_type[LANGUAGE_NONE][0]['value'] = $type;
+					$product->field_make_up_size[LANGUAGE_NONE][0]['value'] = $size;
+					$product->field_make_up_rsp[LANGUAGE_NONE][0] = array(
+						'amount' => $rsp,
+						'currency_code' => "IDR",
+					);
+				}
+				//print "<pre>".print_r($product, true)."</pre>"; exit;
+				commerce_product_save($product);
+
+				// Product display
+				$node = (object)array('type' => $product_type.'_product');
+				node_object_prepare($node);
+				$node->title = $title;
+				$node->uid = 1;
+				if ($product_type == 'skin_care') {
+					$node->field_skin_care_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
+				} else if ($product_type == 'make_up') {
+					$node->field_make_up_product[LANGUAGE_NONE][]['product_id'] = $product->product_id;
+				}
+				$node->language = LANGUAGE_NONE;
+				node_save($node);
+				drupal_set_message('SKU '.$sku.' berhasil ditambahkan', 'notice');
+				//drupal_set_message("<pre>".print_r($product, true)."</pre>");
+				//drupal_set_message("<pre>".print_r($node, true)."</pre>");
+			}
+		}
+	}	
+}
+
 function testtest() {
 $list = array();
-$vocab_brand_load = taxonomy_vocabulary_machine_name_load('fragrance_brand');
-$query = "SELECT a.tid, a.name, b.field_fragrance_category_tid FROM taxonomy_term_data a
-		JOIN field_data_field_fragrance_category b ON a.tid=b.entity_id
+$vocab_category_load = taxonomy_vocabulary_machine_name_load('make_up_parent_category');
+$query = "SELECT a.tid, a.name, b.field_make_up_brand_tid FROM taxonomy_term_data a
+		JOIN field_data_field_make_up_brand b ON a.tid=b.entity_id
 		WHERE a.vid=:vocab";
-$result = db_query($query, array('vocab'=>$vocab_brand_load->vid));
+$result = db_query($query, array('vocab'=>$vocab_category_load->vid));
 foreach ($result as $row) {
-	$term_gender = taxonomy_term_load($row->field_fragrance_category_tid);
-	$gender = $term_gender->name;
-	$list[$row->tid] = $row->name." ".$gender;
+	$term_parent = taxonomy_term_load($row->field_make_up_brand_tid);
+	$parent = $term_parent->name;
+	$list[$row->tid] = $parent." - ".$row->name;
 }
 return $list;
 }

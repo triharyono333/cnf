@@ -1,4 +1,15 @@
-<?php //print "<pre>".print_r($content['product'], true)."</pre>";  ?>
+<?php
+//$node = node_load('121');
+//print "<pre>".print_r($node, true)."</pre>"; 
+//print "<pre>".print_r($content['product'], true)."</pre>"; 
+//$form_idp= commerce_cart_add_to_cart_form_id(array('102'));  
+//in this case product_id of 7 corresponds to a silver level 
+//$productp = commerce_product_load('102');
+//$line_itemp = commerce_product_line_item_new($productp, 1);  // 1 is quantity
+//$line_itemp->data['context']['product_ids'] = array('102');
+//$formp = drupal_get_form($form_idp, $line_itemp);
+//print drupal_render($formp);
+?>
 <?php global $base_url; ?>
 <div class="blog-posts products">
 	<h2 class="entry-title"><?php print $content['category_title'] ?></h2>
@@ -23,14 +34,14 @@
 				$images = $product->field_skin_care_image[LANGUAGE_NONE];
 				$main_image = $product->field_skin_care_image[LANGUAGE_NONE][0]['uri'];
 				$description = $product->field_skin_care_description[LANGUAGE_NONE][0]['value'];
-				$how_to_use = $product->field_skin_care_how_to_use[LANGUAGE_NONE][0]['value'];
-				$ingredient = $product->field_skin_care_ingredient[LANGUAGE_NONE][0]['value'];
+				$type = $product->field_skin_care_type[LANGUAGE_NONE][0]['value'];
+				$size = $product->field_skin_care_size[LANGUAGE_NONE][0]['value'];
 			} else if ($content['product_type'] == 'make_up') {
 				$images = $product->field_make_up_image[LANGUAGE_NONE];
 				$main_image = $product->field_make_up_image[LANGUAGE_NONE][0]['uri'];
 				$description = $product->field_make_up_description[LANGUAGE_NONE][0]['value'];
-				$how_to_use = $product->field_make_up_how_to_use[LANGUAGE_NONE][0]['value'];
-				$ingredient = $product->field_make_up_ingredient[LANGUAGE_NONE][0]['value'];
+				$type = $product->field_make_up_type[LANGUAGE_NONE][0]['value'];
+				$size = $product->field_make_up_size[LANGUAGE_NONE][0]['value'];
 			} else if ($content['product_type'] == 'fragrance') {
 				$brand = _get_brand_name($product->field_fragrance_brand[LANGUAGE_NONE][0]['value']);
 				$images = $product->field_fragrance_image[LANGUAGE_NONE];
@@ -49,8 +60,9 @@
 					</div>
 				</div>
 				<div class="post-content">
-					<?php if ($content['product_type'] == 'fragrance') ?><h5><a data-target="#myModal-<?php print $product->product_id ?>" data-toggle="modal" href="#"><?php print $brand ?></a></h5>
+					<?php if ($content['product_type'] == 'fragrance') { ?><h5><a data-target="#myModal-<?php print $product->product_id ?>" data-toggle="modal" href="#"><?php print $brand ?></a></h5><?php } ?>
 					<h4 class="entry-title"><a href="#" data-toggle="modal" data-target="#myModal-<?php print $product->product_id ?>"><?php print $product->title ?></a></h4>
+		<?php if ($content['product_type'] != 'fragrance') { ?><h5><a data-target="#myModal-<?php print $product->product_id ?>" data-toggle="modal" href="#"><?php print $type ?></a></h5><?php } ?>
 				</div>
 			</article>
 
@@ -120,24 +132,12 @@
 										<h4><?php print $product->sku ?></h4>
 									</div>
 									<div class="description">
-										<ul class="nav nav-tabs" role="tablist">
-											<li role="presentation" class="active"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a></li>
-											<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">How to use</a></li>
-											<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Ingredients</a></li>
-										</ul>
-
-										<!-- Tab panes -->
-										<div class="tab-content">
-											<div role="tabpanel" class="tab-pane active" id="details">
-												<?php print $description ?>
-											</div>
-											<div role="tabpanel" class="tab-pane" id="profile">
-												<?php print $how_to_use ?>
-											</div>
-											<div role="tabpanel" class="tab-pane" id="messages">
-												<?php print $ingredient ?>
-											</div>
-										</div>
+										<h6>DETAILS:</h6>
+										<p><?php print $description ?></p>
+										<h6>CATEGORY:</h6>
+										<p><?php print $type ?></p>
+										<h6>SIZE:</h6>
+										<p><?php print $size ?></p>
 									</div>
 									<?php } ?>
 								</div>
