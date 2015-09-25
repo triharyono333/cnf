@@ -433,6 +433,9 @@
 					display: block; padding: 12px 20px;
 					&:hover { background: #EF262E; color: #fff;}
 				}
+				&.active {
+					a { color: #EF262E; }
+				}
 			}
 		}
 	}
