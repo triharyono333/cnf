@@ -87,6 +87,7 @@ function breadcrumb() {
 	global $base_url;
 	$arg0 = arg(0);
 	$arg1 = arg(1);
+	$arg2 = arg(2);
 	$output = '<li><a href="'.$base_url.'">Home</a></li>';
 	if (isset($arg0) && empty($arg1)) {
 		$arg0 = str_replace('_', ' ', $arg0);
@@ -111,7 +112,11 @@ function breadcrumb() {
 			$node = node_load($arg1);
 			$title = $node->title;
 			$parent = 'Career';
+		} else if ($arg0 == 'event_promo') { 
+			if (isset($arg1) && isset($arg2)) $title = $arg1."/".$arg2;
+			$parent = 'Event Promo';
 		} else {
+			$arg0 = str_replace('_', ' ', $arg0);
 			$parent = ucwords($arg0);
 			$title = ucwords($arg1);
 		}
