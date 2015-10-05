@@ -636,5 +636,7 @@
       #category-menu .panel-body .list-menus li a:hover {
         background: #EF262E;
         color: #fff; }
+      #category-menu .panel-body .list-menus li.active a {
+      color: #EF262E; }
 
 /*# sourceMappingURL=custom.css.map */

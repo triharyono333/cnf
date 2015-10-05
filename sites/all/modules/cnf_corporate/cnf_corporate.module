@@ -44,8 +44,8 @@ function press_coverage() {
 	
 	$query = "SELECT nid  FROM node a, field_data_field_press_coverate_date b
 						WHERE a.nid = b.entity_id AND type='press_coverage' AND YEAR(FROM_UNIXTIME(field_press_coverate_date_value) + INTERVAL 12 HOUR)=".$archive_year." ORDER BY field_press_coverate_date_value DESC";
-	$query_total = "SELECT count(nid) as total FROM node a, field_data_field_press_coverate_date b
-						WHERE a.nid = b.entity_id AND type='press_coverage' ORDER BY field_press_coverate_date_value DESC"; 
+	//$query_total = "SELECT count(nid) as total FROM node a, field_data_field_press_coverate_date b
+	//					WHERE a.nid = b.entity_id AND type='press_coverage' ORDER BY field_press_coverate_date_value DESC"; 
 	
 	$result = db_query_range($query, $start, ITEM_PER_PAGE);
 	foreach ($result as $news) {
@@ -53,7 +53,8 @@ function press_coverage() {
 	}
 	
 	// paging
-	$total = db_query($query_total)->fetchField();
+	//$total = db_query($query_total)->fetchField();
+	$total = db_query($query)->rowCount();
 	pager_default_initialize($total, ITEM_PER_PAGE);
 		
 	$content['press_coverage'] = node_load_multiple($node_nids);
