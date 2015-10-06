@@ -234,6 +234,12 @@
 .blog-posts h2.entry-title {
   margin-bottom: 15px;
   font-weight: 700; }
+.blog-posts h3.entry-title {
+  font-weight: 700;
+  margin-top: 0;
+  border-bottom: 3px solid #f2f2f2;
+  padding-bottom: 12px;
+  margin-bottom: 10px; }
 .blog-posts .head {
   margin-bottom: 35px; }
   .blog-posts .head .post-image {
@@ -255,12 +261,6 @@
   .blog-posts .post-classic .post-content {
     padding-top: 0;
     padding-right: 15px; }
-    .blog-posts .post-classic .post-content h3.entry-title {
-      font-weight: 700;
-      margin-top: 0;
-      border-bottom: 3px solid #f2f2f2;
-      padding-bottom: 12px;
-      margin-bottom: 10px; }
     .blog-posts .post-classic .post-content .btn {
       -webkit-border-radius: 0 0 0 0;
       -moz-border-radius: 0 0 0 0;
@@ -636,7 +636,7 @@
       #category-menu .panel-body .list-menus li a:hover {
         background: #EF262E;
         color: #fff; }
-      #category-menu .panel-body .list-menus li.active a {
+    #category-menu .panel-body .list-menus li.active a {
       color: #EF262E; }
 
 /*# sourceMappingURL=custom.css.map */
