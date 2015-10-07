@@ -161,6 +161,9 @@
 	h2 {
 		&.entry-title {margin-bottom: 15px; font-weight: 700;}
 	}
+	h3 {
+		&.entry-title { font-weight: 700; margin-top: 0; border-bottom: 3px solid #f2f2f2; padding-bottom: 12px; margin-bottom: 10px;}
+	}
 	.head {
 		margin-bottom: 35px;
 		.post-image { margin-bottom: 15px;}
@@ -178,9 +181,6 @@
 		padding-left: 0; padding-top: 15px; padding-bottom: 15px; border-bottom: 3px solid #f2f2f2; margin-bottom: 0;
 		.post-content {
 			padding-top: 0; padding-right: 15px;
-			h3 {
-				&.entry-title { font-weight: 700; margin-top: 0; border-bottom: 3px solid #f2f2f2; padding-bottom: 12px; margin-bottom: 10px;}
-			}
 			.btn {
 				@include border-radius(0, 0, 0, 0); height: 28px; line-height: 27px; padding: 0 20px; background: #ef1d26;
 				&:hover { background: #e03940; color: #fff;}
