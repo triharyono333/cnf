@@ -14,4 +14,7 @@
 			<?php } ?>
 		</div>
 	</div>
+	<div class="post-pagination">
+		<a href="#" class="nav-prev" onclick="parent.history.back();return false;"></a>
+	</div>
 </div>
