@@ -11,7 +11,17 @@ function cnf_event_menu() {
 		'access arguments' => true,
 		'access callback' => true,
 		'type' =>  MENU_CALLBACK,
-	);   
+	); 
+	
+	$items['event_promo_detail'] = array(
+		'title' => t('News Event Detail'),
+		'description' => 'News Event Detail',
+		'page callback' => 'event_promo_detail',
+		'access arguments' => true,
+		'access callback' => true,
+		'type' =>  MENU_CALLBACK,
+	); 
+	
 	return $items;
 }
 
@@ -39,12 +49,29 @@ function event_promo() {
 		foreach ($result as $news) {
 			 $node_nids[] = $news->nid;
 		}
+		$content['archive_month'] = $archive_month;
 		$content['month_name'] = date('F', mktime(0, 0, 0, $archive_month, 10));
 		$content['year'] = $archive_year;
 		$content['news'] = node_load_multiple($node_nids);
 		return theme('cnf_event', array('content' => $content));
 	} else {
 		return 'No Event';
+	}
+}
+
+function event_promo_detail() {
+	global $base_url;
+	$archive_month = arg(1);
+	$archive_year = arg(2);
+	$event_id = arg(3);
+	if (isset($event_id)) {
+		$content['archive_month'] = $archive_month;
+		$content['month_name'] = date('F', mktime(0, 0, 0, $archive_month, 10));
+		$content['year'] = $archive_year;
+		$content['news'] = node_load($event_id);
+	return theme('cnf_event_detail', array('content' => $content));
+	} else {
+		return 'Invalid Event';
 	}
 }
 
@@ -56,6 +83,11 @@ function cnf_event_theme($existing, $type, $theme, $path) {
       'cnf_event' => array(
         'variables' => array('content' => NULL),
         'template' => 'cnf_event', // place you file in 'theme' folder of you module folder
+        'path' => drupal_get_path('module', 'cnf_event')
+      ), 
+			'cnf_event_detail' => array(
+        'variables' => array('content' => NULL),
+        'template' => 'cnf_event_detail', // place you file in 'theme' folder of you module folder
         'path' => drupal_get_path('module', 'cnf_event')
       )
     );
@@ -82,7 +114,7 @@ function _news_archive(){
 		$arg0 = arg(0);
 		//$arg1 = arg(1);
 		//if ($arg0 == 'node' && isset($arg1)) {
-		if ($arg0 == 'event_promo') {
+		if ($arg0 == 'event_promo' || $arg0 == 'event_promo_detail') {
 			$archive_month = arg(1);
 			$archive_year = arg(2);
 

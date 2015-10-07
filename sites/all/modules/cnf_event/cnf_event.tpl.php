@@ -1,4 +1,4 @@
-<?php //print "<pre>".print_r($content, true)."</pre>";   ?>
+<?php global $base_url;   ?>
 <div class="blog-posts news-events">
 	<h2 class="entry-title">News &amp; Events - <?php print $content['month_name'].' '.$content['year'] ?></h2>
 	<?php if (isset($content['news'])) { ?>
@@ -13,40 +13,14 @@
 				<div class="post-content col-md-9 col-sm-8">
 					<h3 class="entry-title"><a href="#"><?php print $news->title ?> - <?php print date('d F Y', $news->field_event_date[LANGUAGE_NONE][0]['value']) ?></a></h3>
 					<p><?php print $news->body[LANGUAGE_NONE][0]['value'] ?></p>
-					<a href="#" data-toggle="modal" data-target="#myModal-<?php print $news->nid ?>" class="btn read-more">Read More</a>
+					<a href="<?php print $base_url ?>/event_promo_detail/<?php print $content['archive_month'].'/'.$content['year'].'/'.$news->nid ?>" data-toggle="modal" class="btn read-more">Read More</a>
 				</div>
 			</div>
 		</article>
-		<!-- modal -->
-		<div class="modal fade" id="myModal-<?php print $news->nid ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-			<div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					</div>
-					<div class="modal-body">
-						<div class="soap-gallery owl-carousel style3 owl-theme">
-							<?php foreach($news->field_event_image[LANGUAGE_NONE] as $image) { ?>
-							<img src="<?php print file_create_url($image['uri']) ?>" alt="">
-							<?php } ?>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- end of modal -->
 		<?php } ?>
 	<?php } else print 'No Event'; ?>
 </div>
 
 <div class="post-pagination">
 	<?php print theme('pager') ?>
-	<!--<a href="#" class="nav-prev disabled" onclick="return false;"></a>
-	<div class="page-links">
-		<span class="active">1</span>
-		<a href="#" data-page-num="2">2</a>
-		<a href="#" data-page-num="3">3</a>
-	</div>
-	<a href="#" class="nav-next" data-page-num="2"></a>
-	-->
 </div>
